@@ -1,0 +1,455 @@
+<!DOCTYPE html><script type="application/json" id="cowork-artifact-meta">
+{
+  "name": "Verstappen Nieuws",
+  "schemaVersion": 1,
+  "description": "Wekelijks Nederlandstalig nieuwsoverzicht over Max Verstappen (F1 & GT), automatisch bijgewerkt via AI.",
+  "mcpTools": [],
+  "mcpServerNames": []
+}
+</script>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Max Verstappen Nieuws</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #07091a;
+    color: #f0f0f0;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    position: relative;
+    width: 100%;
+    height: 340px;
+    overflow: hidden;
+    background: linear-gradient(145deg, #0c1232 0%, #07091a 50%, #140508 100%);
+    display: flex;
+    align-items: flex-end;
+    padding: 0 32px 32px;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 38px, rgba(255,255,255,0.018) 38px, rgba(255,255,255,0.018) 39px),
+      repeating-linear-gradient(90deg, transparent, transparent 38px, rgba(255,255,255,0.012) 38px, rgba(255,255,255,0.012) 39px);
+    pointer-events: none;
+  }
+  .hero-track {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, #e8002d 20%, #ffd700 50%, #e8002d 80%, transparent 100%);
+    box-shadow: 0 0 14px rgba(232,0,45,0.45);
+  }
+
+  /* ── HERO ILLUSTRATION ── */
+  .hero-art {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 62%;
+    max-width: 720px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    overflow: hidden;
+    gap: 2px;
+  }
+  .hero-art::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #07091a 0%, rgba(7,9,26,0.55) 28%, transparent 60%);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .hero-art::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(7,9,26,0.4) 0%, transparent 30%, transparent 70%, rgba(7,9,26,0.5) 100%);
+    z-index: 2;
+    pointer-events: none;
+  }
+  .hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  .hero-img-helmet {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    object-position: center top;
+    filter: brightness(0.9);
+  }
+  .hero-img-rb22 {
+    grid-column: 2;
+    grid-row: 1;
+    object-position: center center;
+    filter: brightness(0.85);
+  }
+  .hero-img-gt3 {
+    grid-column: 2;
+    grid-row: 2;
+    object-position: center 40%;
+    filter: brightness(0.85);
+  }
+
+  /* ── HERO TEXT ── */
+  .hero-content {
+    position: relative;
+    z-index: 10;
+    max-width: 360px;
+  }
+  .hero-eyebrow {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 3.5px;
+    text-transform: uppercase;
+    color: #e8002d;
+    margin-bottom: 10px;
+  }
+  .hero-title {
+    font-size: 38px;
+    font-weight: 900;
+    line-height: 1.0;
+    color: #fff;
+    text-shadow: 0 2px 28px rgba(0,0,0,0.95);
+  }
+  .hero-title em { font-style: normal; color: #ffd700; }
+  .hero-sub {
+    margin-top: 14px;
+    font-size: 11px;
+    color: rgba(255,255,255,0.35);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .live-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 8px #22c55e;
+    animation: blink 2s infinite;
+    flex-shrink: 0;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  /* ── RACE BAR ── */
+  .next-race-bar {
+    background: linear-gradient(90deg, #0c1636 0%, #121e44 40%, #160a0a 100%);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 10px 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .next-race-bar::-webkit-scrollbar { display: none; }
+  .nr-label { font-size: 9px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: #e8002d; white-space: nowrap; flex-shrink: 0; }
+  .nr-divider { width: 1px; height: 24px; background: rgba(255,255,255,0.1); flex-shrink: 0; }
+  .nr-flag { font-size: 20px; flex-shrink: 0; }
+  .nr-info { flex-shrink: 0; }
+  .nr-race { font-size: 14px; font-weight: 800; color: #fff; white-space: nowrap; }
+  .nr-date { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 1px; }
+  .nr-countdown { margin-left: auto; display: flex; gap: 8px; flex-shrink: 0; }
+  .nr-unit { text-align: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 4px 10px; }
+  .nr-num { font-size: 18px; font-weight: 900; color: #ffd700; line-height: 1; font-variant-numeric: tabular-nums; }
+  .nr-lbl { font-size: 8px; color: rgba(255,255,255,0.28); letter-spacing: 1px; text-transform: uppercase; }
+
+  /* ── FILTER BAR ── */
+  .filter-bar {
+    display: flex;
+    gap: 8px;
+    padding: 14px 28px;
+    background: rgba(255,255,255,0.015);
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .filter-bar::-webkit-scrollbar { display: none; }
+  .filter-btn {
+    flex-shrink: 0;
+    padding: 5px 16px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: transparent;
+    color: rgba(255,255,255,0.38);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-transform: uppercase;
+  }
+  .filter-btn:hover { border-color: rgba(232,0,45,0.4); color: rgba(255,255,255,0.75); }
+  .filter-btn.active { background: #e8002d; border-color: #e8002d; color: #fff; box-shadow: 0 0 14px rgba(232,0,45,0.3); }
+
+  /* ── NEWS CARDS ── */
+  .news-section { padding: 22px 28px 40px; max-width: 920px; margin: 0 auto; }
+  .section-label { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.18); margin-bottom: 14px; }
+  .news-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .news-card {
+    background: rgba(255,255,255,0.032);
+    border: 1px solid rgba(255,255,255,0.055);
+    border-left: 3px solid transparent;
+    border-radius: 10px;
+    padding: 16px 18px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+    align-items: center;
+    transition: all 0.15s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .news-card:hover { background: rgba(255,255,255,0.058); transform: translateX(4px); }
+  .news-card.cat-f1-card  { border-left-color: #e8002d; }
+  .news-card.cat-f1-card:hover  { box-shadow: -2px 0 18px rgba(232,0,45,0.18); }
+  .news-card.cat-gt-card  { border-left-color: #3b82f6; }
+  .news-card.cat-gt-card:hover  { box-shadow: -2px 0 18px rgba(59,130,246,0.18); }
+  .news-card.cat-sim-card { border-left-color: #a855f7; }
+  .news-card.cat-sim-card:hover { box-shadow: -2px 0 18px rgba(168,85,247,0.18); }
+  .news-card.cat-alg-card { border-left-color: rgba(255,255,255,0.18); }
+
+  .card-meta { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; flex-wrap: wrap; }
+  .cat-tag { font-size: 9px; font-weight: 800; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; }
+  .cat-f1  { background: rgba(232,0,45,0.16);  color: #ff7088; border: 1px solid rgba(232,0,45,0.22); }
+  .cat-gt  { background: rgba(59,130,246,0.16); color: #7dd3fc; border: 1px solid rgba(59,130,246,0.22); }
+  .cat-sim { background: rgba(168,85,247,0.16); color: #d8b4fe; border: 1px solid rgba(168,85,247,0.22); }
+  .cat-alg { background: rgba(255,255,255,0.06); color: #999; border: 1px solid rgba(255,255,255,0.1); }
+
+  .card-source { font-size: 11px; color: rgba(255,255,255,0.26); }
+  .card-date   { font-size: 11px; color: rgba(255,255,255,0.18); margin-left: auto; }
+  .card-title  { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.88); line-height: 1.35; margin-bottom: 5px; }
+  .card-summary{ font-size: 12px; color: rgba(255,255,255,0.36); line-height: 1.6; }
+  .card-arrow  { color: rgba(255,255,255,0.18); font-size: 18px; transition: color 0.15s; flex-shrink: 0; padding-left: 4px; }
+  .news-card:hover .card-arrow { color: #e8002d; }
+  .no-news { text-align: center; padding: 48px; color: rgba(255,255,255,0.14); font-size: 13px; }
+
+  .footer { text-align: center; padding: 0 0 32px; font-size: 10px; color: rgba(255,255,255,0.09); letter-spacing: 0.5px; }
+
+  /* ── MOBILE ── */
+  @media (max-width: 600px) {
+    .hero { height: 260px; padding: 0 20px 24px; }
+    .hero-art { width: 55%; }
+    .hero-title { font-size: 28px; }
+    .next-race-bar { padding: 10px 16px; }
+    .filter-bar { padding: 12px 16px; }
+    .news-section { padding: 18px 16px 32px; }
+    .card-summary { display: none; }
+  }
+  @media (max-width: 400px) {
+    .hero-art { width: 50%; }
+    .hero-title { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ HERO -->
+<div class="hero">
+  <div class="hero-track"></div>
+
+  <div class="hero-art">
+    <img class="hero-img hero-img-helmet"
+         src="https://i.redd.it/maxs-new-2024-wdc-helmet-v0-kgn99wt0ot2e1.jpg"
+         alt="Max Verstappen 4x kampioen helm">
+    <img class="hero-img hero-img-rb22"
+         src="https://cdn.racingnews365.com/2026/Launches/Red-Bull/SI202601150722.jpg"
+         alt="Red Bull RB22 2026">
+    <img class="hero-img hero-img-gt3"
+         src="https://cdn-8.motorsport.com/images/amp/YXypjEQ6/s1000/3-mercedes-amg-team-verstappen.webp"
+         alt="Verstappen Racing AMG GT3">
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">Verstappen Racing Universe</div>
+    <h1 class="hero-title">Max<br><em>Verstappen</em><br>Nieuws</h1>
+    <div class="hero-sub">
+      <div class="live-dot"></div>
+      <span id="updateLabel">Bijgewerkt op maandag 2 juni 2026 · Dagelijks om 23:00</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ RACE BAR -->
+<div class="next-race-bar">
+  <div class="nr-label">Volgende Race</div>
+  <div class="nr-divider"></div>
+  <div class="nr-flag">🇲🇨</div>
+  <div class="nr-info">
+    <div class="nr-race">Grand Prix van Monaco</div>
+    <div class="nr-date">Circuit de Monaco · Zondag 7 juni 2026 · 15:00 lokale tijd (CEST)</div>
+  </div>
+  <div class="nr-countdown" id="countdown">
+    <div class="nr-unit"><div class="nr-num" id="cd-d">--</div><div class="nr-lbl">dagen</div></div>
+    <div class="nr-unit"><div class="nr-num" id="cd-h">--</div><div class="nr-lbl">uur</div></div>
+    <div class="nr-unit"><div class="nr-num" id="cd-m">--</div><div class="nr-lbl">min</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ FILTER -->
+<div class="filter-bar">
+  <button class="filter-btn active" data-filter="all">Alles</button>
+  <button class="filter-btn" data-filter="F1">🏎 Formule 1</button>
+  <button class="filter-btn" data-filter="GT">🏁 GT Racing</button>
+  <button class="filter-btn" data-filter="Sim">🎮 Simracing</button>
+  <button class="filter-btn" data-filter="Algemeen">📰 Algemeen</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ NEWS -->
+<div class="news-section">
+  <div class="section-label">Nieuws van de afgelopen 7 dagen</div>
+  <div class="news-list" id="newsList"></div>
+</div>
+
+<div class="footer">Verstappen Nieuws · Dagelijks bijgewerkt om 23:00 · Max 7 dagen oud · Klik voor origineel artikel</div>
+
+<script>
+const articles = [
+  {
+    title: "Alle strafpunten verlopen: Verstappen begint met schone lei",
+    summary: "Op 1 juni 2026 vervielen de drie resterende strafpunten op de superlicentie van Max Verstappen, inclusief de punten die hij in 2025 ontving na het incident met George Russell in Barcelona. Verstappen staat nu op nul actieve strafpunten — een jaar geleden stond hij nog op 11 en dreigde hij geschorst te worden.",
+    category: "F1",
+    source: "RacingNews365",
+    date: "1 juni 2026",
+    url: "https://racingnews365.nl/max-verstappen-verliest-laatste-strafpunten"
+  },
+  {
+    title: "Verstappen brengt WK-voetbal merchandise uit met eigen rugnummer",
+    summary: "In aanloop naar het WK voetbal 2026, dat op 11 juni in Mexico-Stad wordt afgetrapt, heeft Max Verstappen een speciaal oranje shirt uitgebracht via zijn webshop. Het shirt draagt zijn eigen nummer en combineert zijn racemerk met de nationale voetbalkoorts.",
+    category: "Algemeen",
+    source: "GPblog",
+    date: "1 juni 2026",
+    url: "https://www.gpblog.com/nl/nieuws/verstappen-brengt-speciaal-oranje-wk-shirt-uit-met-eigen-rugnummer"
+  },
+  {
+    title: "Geen sabbatical voor Verstappen: 'Als ik stop, stop ik volledig'",
+    summary: "Na weken van speculatie over een mogelijke F1-pauze sprak Verstappen zich definitief uit. Hij sluit een sabbatical categorisch uit en zegt dat hij, als hij ooit vertrekt, helemaal stopt met F1. De uitspraak volgt op zijn aanhoudende kritiek op de 2026-regelgeving en zijn omschrijving van de huidige auto's als 'Formule E op steroïden'.",
+    category: "F1",
+    source: "GPFans",
+    date: "30 mei 2026",
+    url: "https://www.gpfans.com/en/f1-news/1083844/max-verstappen-nurburgring-24-hours-mercedes-amg-race-results-final-times/"
+  },
+  {
+    title: "Red Bull-baas: 'Verstappen is volledig toegewijd ondanks frustraties'",
+    summary: "De teamleiding van Red Bull Racing benadrukte publiekelijk dat Verstappen volledig gefocust is op het team, ondanks zijn herhaalde kritiek op de nieuwe F1-reglementen. De uitspraken komen temidden van aanhoudende geruchten over een mogelijke exit via zijn contractclausule als hij bij de zomerstop niet in de top-2 staat.",
+    category: "F1",
+    source: "Motorsport.com",
+    date: "29 mei 2026",
+    url: "https://www.motorsport.com/f1/news/"
+  },
+  {
+    title: "Eerste podium 2026: Verstappen derde in Canada na spannend gevecht",
+    summary: "Max Verstappen behaalde zijn eerste podiumfinish van het 2026-seizoen met een derde plek in de Canadese GP in Montreal. Kimi Antonelli (Mercedes) won, gevolgd door Lewis Hamilton (Ferrari). Verstappen reed lange tijd op P2 maar verloor die positie aan Hamilton in de slotfase. Hij noemde het resultaat 'verrassend maar welkom'.",
+    category: "F1",
+    source: "Formula1.com",
+    date: "25 mei 2026",
+    url: "https://www.formula1.com/en/latest/article/antonelli-wins-dramatic-canadian-grand-prix-as-russell-retires-amid-thrilling-mercedes-battle.MzvclJaqCidlYMUXonuDq"
+  },
+  {
+    title: "FIA kondigt 2027-regelwijziging aan na Verstappen-kritiek",
+    summary: "De FIA reageert op de aanhoudende klachten van Verstappen en andere coureurs over de 2026-bolides. Voor 2027 wordt het verbrandingsmotorvermogen verhoogd en het elektrisch vermogen verlaagd. Verstappen had de huidige auto's herhaaldelijk omschreven als onecht racen en maakte duidelijk dat hij dit als essentieel ziet voor zijn toekomstplannen.",
+    category: "F1",
+    source: "Motorsport.com",
+    date: "27 mei 2026",
+    url: "https://www.motorsport.com/f1/news/"
+  },
+  {
+    title: "Lambiase verlaat Red Bull voor McLaren: Verstappen had zijn zegen gegeven",
+    summary: "Race-engineer Gianpiero Lambiase wordt Chief Racing Officer bij McLaren na het aflopen van zijn Red Bull-contract in 2028. Verstappen onthulde dat Lambiase zijn goedkeuring had gevraagd voor de overstap. De twee werkten samen aan vier wereldtitels. Red Bull bevestigt dat Lambiase tot zijn vertrek de engineer van Verstappen blijft.",
+    category: "F1",
+    source: "Formula1.com / Sky Sports",
+    date: "26 mei 2026",
+    url: "https://www.formula1.com/en/latest/article/max-verstappens-race-engineer-gianpiero-lambiase-to-leave-red-bull-in-2028.5QVkhqOu9rWXJGMEyPFD81"
+  }
+];
+
+function catClass(c) {
+  if (c==='F1')  return 'cat-f1';
+  if (c==='GT')  return 'cat-gt';
+  if (c==='Sim') return 'cat-sim';
+  return 'cat-alg';
+}
+function cardClass(c) {
+  if (c==='F1')  return 'cat-f1-card';
+  if (c==='GT')  return 'cat-gt-card';
+  if (c==='Sim') return 'cat-sim-card';
+  return 'cat-alg-card';
+}
+
+function render(filter) {
+  const list = document.getElementById('newsList');
+  list.innerHTML = '';
+  const items = filter === 'all' ? articles : articles.filter(a => a.category === filter);
+  if (!items.length) {
+    list.innerHTML = '<div class="no-news">Geen nieuws voor deze categorie in de afgelopen 7 dagen.</div>';
+    return;
+  }
+  items.forEach(a => {
+    const card = document.createElement('a');
+    card.className = `news-card ${cardClass(a.category)}`;
+    card.href = a.url || '#';
+    card.target = '_blank';
+    card.rel = 'noopener noreferrer';
+    card.innerHTML = `
+      <div>
+        <div class="card-meta">
+          <span class="cat-tag ${catClass(a.category)}">${a.category}</span>
+          <span class="card-source">${a.source}</span>
+          <span class="card-date">${a.date}</span>
+        </div>
+        <div class="card-title">${a.title}</div>
+        <div class="card-summary">${a.summary}</div>
+      </div>
+      <div class="card-arrow">↗</div>
+    `;
+    list.appendChild(card);
+  });
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    render(btn.dataset.filter);
+  });
+});
+
+function updateCountdown() {
+  const race = new Date('2026-06-07T15:00:00+02:00');
+  const now  = new Date();
+  const diff = race - now;
+  if (diff <= 0) {
+    document.getElementById('countdown').innerHTML = '<div style="color:#22c55e;font-size:12px;font-weight:700;letter-spacing:1px">🏁 RACE DAY</div>';
+    return;
+  }
+  const d = Math.floor(diff / 86400000);
+  const h = Math.floor((diff % 86400000) / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  document.getElementById('cd-d').textContent = String(d).padStart(2,'0');
+  document.getElementById('cd-h').textContent = String(h).padStart(2,'0');
+  document.getElementById('cd-m').textContent = String(m).padStart(2,'0');
+}
+updateCountdown();
+setInterval(updateCountdown, 30000);
+
+render('all');
+</script>
+</body>
+</html>
