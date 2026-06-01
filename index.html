@@ -31,26 +31,18 @@
     background: #07091a;
   }
 
-  /* foto-balk: 4 gelijke kolommen */
+  /* header banner */
   .header-photos {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    width: 100%;
     height: 260px;
-    gap: 3px;
+    overflow: hidden;
   }
   .header-photos img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center center;
     display: block;
-    filter: brightness(0.82) saturate(1.1);
-    transition: filter 0.25s, transform 0.3s;
-  }
-  .header-photos img:hover {
-    filter: brightness(1) saturate(1.2);
-    transform: scale(1.02);
-    z-index: 2;
-    position: relative;
   }
 
   /* rode streep onderaan foto's */
@@ -221,10 +213,7 @@
 <!-- ═══════════════════════════════════════════════════════ HEADER -->
 <div class="header">
   <div class="header-photos">
-    <img src="img1.jpeg" alt="Max Verstappen">
-    <img src="img2.webp" alt="Max Verstappen">
-    <img src="img3.jpeg" alt="Max Verstappen GT">
-    <img src="img4.jpeg" alt="Max Verstappen auto">
+    <img src="header.jpg" alt="Max Verstappen header">
   </div>
   <div class="header-track"></div>
   <div class="header-title-bar">
@@ -232,7 +221,7 @@
     <h1 class="header-title">Max <em>Verstappen</em> Nieuws</h1>
     <div class="header-sub">
       <div class="live-dot"></div>
-      <span id="updateLabel">Bijgewerkt op maandag 2 juni 2026 · Dagelijks om 23:00</span>
+      <span id="updateLabel">Bijgewerkt op maandag 1 juni 2026 · Dagelijks om 23:00</span>
     </div>
   </div>
 </div>
@@ -274,7 +263,7 @@
 const articles = [
   {
     title: "Alle strafpunten verlopen: Verstappen begint met schone lei",
-    summary: "Op 1 juni 2026 vervielen de drie resterende strafpunten op de superlicentie van Max Verstappen, inclusief de punten die hij in 2025 ontving na het incident met George Russell in Barcelona. Verstappen staat nu op nul actieve strafpunten — een jaar geleden stond hij nog op 11 en dreigde hij geschorst te worden.",
+    summary: "Op 1 juni 2026 vervielen de drie resterende strafpunten op de superlicentie van Max Verstappen, inclusief de punten ontvangen na het incident met George Russell in Barcelona 2025. Verstappen staat nu op nul actieve strafpunten — een jaar geleden stond hij nog op 11 en dreigde hij geschorst te worden.",
     category: "F1",
     source: "RacingNews365",
     date: "1 juni 2026",
@@ -282,43 +271,35 @@ const articles = [
   },
   {
     title: "Verstappen brengt WK-voetbal merchandise uit met eigen rugnummer",
-    summary: "In aanloop naar het WK voetbal 2026, dat op 11 juni in Mexico-Stad wordt afgetrapt, heeft Max Verstappen een speciaal oranje shirt uitgebracht via zijn webshop. Het shirt draagt zijn eigen nummer en combineert zijn racemerk met de nationale voetbalkoorts.",
+    summary: "In aanloop naar het WK voetbal 2026 heeft Max Verstappen een speciaal oranje shirt uitgebracht via zijn webshop. Het shirt draagt zijn eigen rugnummer 3 en combineert zijn racemerk met de nationale voetbalkoorts. Het ontwerp in oranje met subtiele 'MV'-patronen was razendsnel uitverkocht.",
     category: "Algemeen",
     source: "GPblog",
     date: "1 juni 2026",
     url: "https://www.gpblog.com/nl/nieuws/verstappen-brengt-speciaal-oranje-wk-shirt-uit-met-eigen-rugnummer"
   },
   {
-    title: "Geen sabbatical voor Verstappen: 'Als ik stop, stop ik volledig'",
-    summary: "Na weken van speculatie over een mogelijke F1-pauze sprak Verstappen zich definitief uit. Hij sluit een sabbatical categorisch uit en zegt dat hij, als hij ooit vertrekt, helemaal stopt met F1. De uitspraak volgt op zijn aanhoudende kritiek op de 2026-regelgeving en zijn omschrijving van de huidige auto's als 'Formule E op steroïden'.",
-    category: "F1",
-    source: "GPFans",
-    date: "30 mei 2026",
-    url: "https://www.gpfans.com/en/f1-news/1083844/max-verstappen-nurburgring-24-hours-mercedes-amg-race-results-final-times/"
-  },
-  {
-    title: "Red Bull-baas: 'Verstappen is volledig toegewijd ondanks frustraties'",
-    summary: "De teamleiding van Red Bull Racing benadrukte publiekelijk dat Verstappen volledig gefocust is op het team, ondanks zijn herhaalde kritiek op de nieuwe F1-reglementen. De uitspraken komen temidden van aanhoudende geruchten over een mogelijke exit via zijn contractclausule als hij bij de zomerstop niet in de top-2 staat.",
-    category: "F1",
-    source: "Motorsport.com",
-    date: "29 mei 2026",
-    url: "https://www.motorsport.com/f1/news/"
+    title: "Nürburgring 24 uur: Verstappen Racing leidt tot hartbreuk in slotronde",
+    summary: "Max Verstappen en zijn Verstappen Racing-team (Mercedes-AMG) domineerden de Nürburgring 24 uur volledig, maar een kapotte cardanas met minder dan vier uur te gaan maakte een einde aan hun zegeweelrijden. Het team had meer dan 30 seconden voorsprong opgebouwd. Verstappen zelf reed indrukwekkende nachtstints die hem veel lof opleverden.",
+    category: "GT",
+    source: "GPblog / PlanetF1",
+    date: "26 mei 2026",
+    url: "https://www.gpblog.com/en/breaking-news/nurburgring-24h-full-results-verstappens-race-ends-in-late-heartbreak-with-painful-dnf"
   },
   {
     title: "Eerste podium 2026: Verstappen derde in Canada na spannend gevecht",
-    summary: "Max Verstappen behaalde zijn eerste podiumfinish van het 2026-seizoen met een derde plek in de Canadese GP in Montreal. Kimi Antonelli (Mercedes) won, gevolgd door Lewis Hamilton (Ferrari). Verstappen reed lange tijd op P2 maar verloor die positie aan Hamilton in de slotfase. Hij noemde het resultaat 'verrassend maar welkom'.",
+    summary: "Max Verstappen behaalde zijn eerste podiumfinish van het 2026-seizoen met een derde plek in de Canadese GP in Montreal. Kimi Antonelli (Mercedes) won, gevolgd door Lewis Hamilton (Ferrari). Verstappen reed lange tijd op P2 maar verloor die positie aan Hamilton in de slotfase na een strijd over de setups van de RB22.",
     category: "F1",
     source: "Formula1.com",
     date: "25 mei 2026",
     url: "https://www.formula1.com/en/latest/article/antonelli-wins-dramatic-canadian-grand-prix-as-russell-retires-amid-thrilling-mercedes-battle.MzvclJaqCidlYMUXonuDq"
   },
   {
-    title: "FIA kondigt 2027-regelwijziging aan na Verstappen-kritiek",
-    summary: "De FIA reageert op de aanhoudende klachten van Verstappen en andere coureurs over de 2026-bolides. Voor 2027 wordt het verbrandingsmotorvermogen verhoogd en het elektrisch vermogen verlaagd. Verstappen had de huidige auto's herhaaldelijk omschreven als onecht racen en maakte duidelijk dat hij dit als essentieel ziet voor zijn toekomstplannen.",
+    title: "RB22-probleem richting Monaco: bumpy circuits blijven Red Bulls zwakke plek",
+    summary: "Na Canada erkende Verstappen dat de RB22 moeite blijft houden op stuiterende circuits. 'Als het ergens hobbelig is, wordt het moeilijk voor ons', aldus Verstappen. Monaco, met zijn kasseien en stoepranden, vormt een bijzondere uitdaging. Teambaas Laurent Mekies benadrukte dat het probleem oplosbaar is zonder laptime te verliezen.",
     category: "F1",
     source: "Motorsport.com",
-    date: "27 mei 2026",
-    url: "https://www.motorsport.com/f1/news/"
+    date: "29 mei 2026",
+    url: "https://www.motorsport.com/f1/news/max-verstappen-jokes-about-red-bull-in-monaco-im-going-to-order-a-new-back/10825961/"
   },
   {
     title: "Lambiase verlaat Red Bull voor McLaren: Verstappen had zijn zegen gegeven",
@@ -327,6 +308,14 @@ const articles = [
     source: "Formula1.com / Sky Sports",
     date: "26 mei 2026",
     url: "https://www.formula1.com/en/latest/article/max-verstappens-race-engineer-gianpiero-lambiase-to-leave-red-bull-in-2028.5QVkhqOu9rWXJGMEyPFD81"
+  },
+  {
+    title: "Verstappen Racing stapt over naar Mercedes voor volledig GT-seizoen 2026",
+    summary: "Max Verstappens sportscarteam heeft een meerjarig deal getekend met Mercedes-AMG en neemt deel aan beide rondes van het GT World Challenge Europe in 2026. Het team debuteerde eerder dit jaar al in de Nürburgring 24 uur. Le Mans-gesprekken met Ford zijn gaande maar een deelname in 2026 of 2027 is nog niet bevestigd.",
+    category: "GT",
+    source: "Motorsport.com",
+    date: "27 mei 2026",
+    url: "https://www.motorsport.com/gtwce-endurance/news/max-verstappens-team-switches-to-mercedes-for-2026-gt-campaign/10786558/"
   }
 ];
 
