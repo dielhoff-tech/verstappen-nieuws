@@ -221,7 +221,7 @@
     <h1 class="header-title">Max <em>Verstappen</em> Nieuws</h1>
     <div class="header-sub">
       <div class="live-dot"></div>
-      <span id="updateLabel">Bijgewerkt op maandag 1 juni 2026 · Dagelijks om 23:00</span>
+      <span id="updateLabel">Bijgewerkt op maandag 2 juni 2026 · Dagelijks om 23:00</span>
     </div>
   </div>
 </div>
@@ -233,7 +233,7 @@
   <div class="nr-flag">🇲🇨</div>
   <div class="nr-info">
     <div class="nr-race">Grand Prix van Monaco</div>
-    <div class="nr-date">Circuit de Monaco · Zondag 7 juni 2026 · 15:00 lokale tijd (CEST)</div>
+    <div class="nr-date">Circuit de Monaco · Zondag 7 juni 2026 · 14:00 lokale tijd (CEST)</div>
   </div>
   <div class="nr-countdown" id="countdown">
     <div class="nr-unit"><div class="nr-num" id="cd-d">--</div><div class="nr-lbl">dagen</div></div>
@@ -262,12 +262,36 @@
 <script>
 const articles = [
   {
-    title: "Alle strafpunten verlopen: Verstappen begint met schone lei",
+    title: "Monaco race week: Verstappen als dark horse op het stratencircuit",
+    summary: "Het is race week in Monaco en Max Verstappen wordt gezien als een potentiële verrassing op het stratencircuit van Monte Carlo. De RB22 heeft sterke prestaties in langzame secties en de tractie — cruciaal in Monaco — zou een voordeel kunnen zijn. Formula 1 zelf noemt Verstappen één van de vijf grote verhaallijnen van dit weekend.",
+    category: "F1",
+    source: "Formula1.com",
+    date: "1 juni 2026",
+    url: "https://www.formula1.com/en/latest/article/its-race-week-5-storylines-were-excited-about-ahead-of-the-2026-monaco-grand-prix.6augu7uTvHJRRmoxT9O8n"
+  },
+  {
+    title: "Gesprekken Verstappen en Mercedes nooit gestopt na vorig jaar",
+    summary: "Volgens ingewijden zijn de contacten tussen Max Verstappen en Mercedes na de gesprekken van vorig jaar nooit volledig beëindigd. Verstappen rijdt in 2026 bij Red Bull maar zijn contract loopt tot 2028 en heeft exitclausules. Zijn toekomst voor 2027 en daarna is nog volledig open en Mercedes blijft een optie.",
+    category: "F1",
+    source: "GPFans.com",
+    date: "1 juni 2026",
+    url: "https://www.gpfans.com/nl/f1-nieuws/1084978/mercedes-en-verstappen-zijn-na-gesprekken-vorig-jaar-niet-gestopt-met-praten/"
+  },
+  {
+    title: "Alle strafpunten verlopen: Verstappen begint Monaco met schone lei",
     summary: "Op 1 juni 2026 vervielen de drie resterende strafpunten op de superlicentie van Max Verstappen, inclusief de punten ontvangen na het incident met George Russell in Barcelona 2025. Verstappen staat nu op nul actieve strafpunten — een jaar geleden stond hij nog op 11 en dreigde hij geschorst te worden.",
     category: "F1",
     source: "RacingNews365",
     date: "1 juni 2026",
     url: "https://racingnews365.nl/max-verstappen-verliest-laatste-strafpunten"
+  },
+  {
+    title: "Verstappen bezorgd over RB22 rijkwaliteit in Monaco",
+    summary: "Max Verstappen uitte zorgen over de stijve setup van de RB22 op het hobbelige stratencircuit van Monaco. 'Als het ergens hobbelig is, wordt het moeilijk voor ons', aldus Verstappen. Teambaas Laurent Mekies benadrukt dat er niets te zien is dat niet oplosbaar is, maar het circuit met zijn kasseien en stoepranden vormt een bijzondere uitdaging.",
+    category: "F1",
+    source: "GrandPrix247 / Motorsport.com",
+    date: "31 mei 2026",
+    url: "https://www.grandprix247.com/formula-1-news/max-verstappen-concerned-about-the-ride-quality-of-his-rb22-in-monaco-grand-prix"
   },
   {
     title: "Verstappen brengt WK-voetbal merchandise uit met eigen rugnummer",
@@ -276,6 +300,14 @@ const articles = [
     source: "GPblog",
     date: "1 juni 2026",
     url: "https://www.gpblog.com/nl/nieuws/verstappen-brengt-speciaal-oranje-wk-shirt-uit-met-eigen-rugnummer"
+  },
+  {
+    title: "Lambiase verlaat Red Bull voor McLaren: Verstappen had zijn zegen gegeven",
+    summary: "Race-engineer Gianpiero Lambiase wordt Chief Racing Officer bij McLaren na het aflopen van zijn Red Bull-contract in 2028. Verstappen onthulde dat Lambiase zijn goedkeuring had gevraagd voor de overstap. De twee werkten samen aan vier wereldtitels. Red Bull bevestigt dat Lambiase tot zijn vertrek de engineer van Verstappen blijft.",
+    category: "F1",
+    source: "Formula1.com / Sky Sports",
+    date: "26 mei 2026",
+    url: "https://www.formula1.com/en/latest/article/max-verstappens-race-engineer-gianpiero-lambiase-to-leave-red-bull-in-2028.5QVkhqOu9rWXJGMEyPFD81"
   },
   {
     title: "Nürburgring 24 uur: Verstappen Racing leidt tot hartbreuk in slotronde",
@@ -292,30 +324,6 @@ const articles = [
     source: "Formula1.com",
     date: "25 mei 2026",
     url: "https://www.formula1.com/en/latest/article/antonelli-wins-dramatic-canadian-grand-prix-as-russell-retires-amid-thrilling-mercedes-battle.MzvclJaqCidlYMUXonuDq"
-  },
-  {
-    title: "RB22-probleem richting Monaco: bumpy circuits blijven Red Bulls zwakke plek",
-    summary: "Na Canada erkende Verstappen dat de RB22 moeite blijft houden op stuiterende circuits. 'Als het ergens hobbelig is, wordt het moeilijk voor ons', aldus Verstappen. Monaco, met zijn kasseien en stoepranden, vormt een bijzondere uitdaging. Teambaas Laurent Mekies benadrukte dat het probleem oplosbaar is zonder laptime te verliezen.",
-    category: "F1",
-    source: "Motorsport.com",
-    date: "29 mei 2026",
-    url: "https://www.motorsport.com/f1/news/max-verstappen-jokes-about-red-bull-in-monaco-im-going-to-order-a-new-back/10825961/"
-  },
-  {
-    title: "Lambiase verlaat Red Bull voor McLaren: Verstappen had zijn zegen gegeven",
-    summary: "Race-engineer Gianpiero Lambiase wordt Chief Racing Officer bij McLaren na het aflopen van zijn Red Bull-contract in 2028. Verstappen onthulde dat Lambiase zijn goedkeuring had gevraagd voor de overstap. De twee werkten samen aan vier wereldtitels. Red Bull bevestigt dat Lambiase tot zijn vertrek de engineer van Verstappen blijft.",
-    category: "F1",
-    source: "Formula1.com / Sky Sports",
-    date: "26 mei 2026",
-    url: "https://www.formula1.com/en/latest/article/max-verstappens-race-engineer-gianpiero-lambiase-to-leave-red-bull-in-2028.5QVkhqOu9rWXJGMEyPFD81"
-  },
-  {
-    title: "Verstappen Racing stapt over naar Mercedes voor volledig GT-seizoen 2026",
-    summary: "Max Verstappens sportscarteam heeft een meerjarig deal getekend met Mercedes-AMG en neemt deel aan beide rondes van het GT World Challenge Europe in 2026. Het team debuteerde eerder dit jaar al in de Nürburgring 24 uur. Le Mans-gesprekken met Ford zijn gaande maar een deelname in 2026 of 2027 is nog niet bevestigd.",
-    category: "GT",
-    source: "Motorsport.com",
-    date: "27 mei 2026",
-    url: "https://www.motorsport.com/gtwce-endurance/news/max-verstappens-team-switches-to-mercedes-for-2026-gt-campaign/10786558/"
   }
 ];
 
@@ -371,7 +379,7 @@ document.querySelectorAll('.filter-btn').forEach(btn => {
 });
 
 function updateCountdown() {
-  const race = new Date('2026-06-07T15:00:00+02:00');
+  const race = new Date('2026-06-07T14:00:00+02:00');
   const now  = new Date();
   const diff = race - now;
   if (diff <= 0) {
