@@ -49,67 +49,70 @@ def volgende_race():
             }
     return None
 
-# ─── RSS FEEDS ────────────────────────────────────────────────────────────
+# ─── RSS FEEDS (Nederlandse bronnen eerst) ────────────────────────────────
 RSS_BRONNEN = [
-    ("https://www.motorsport.com/rss/f1/news/",          "Motorsport.com", "f1"),
-    ("https://www.autosport.com/rss/f1/news/",           "Autosport",      "f1"),
-    ("https://racingnews365.com/feed",                    "RacingNews365",  "f1"),
-    ("https://www.gpblog.com/nl/rss.xml",                "GPblog",         "f1"),
-    ("https://www.formula1.com/content/fom-website/en/latest/all.rss.html", "Formula1.com", "f1"),
+    ("https://www.formule1.nl/feed/",           "Formule1.nl",   "f1", True),
+    ("https://www.racingnews365.com/feed",       "RacingNews365", "f1", True),
+    ("https://nos.nl/sport/formule1/rss.xml",    "NOS Sport",     "f1", True),
+    ("https://www.motorsport.com/rss/f1/news/",  "Motorsport.com","f1", False),
+    ("https://www.autosport.com/rss/f1/news/",   "Autosport",     "f1", False),
 ]
 
-def parse_rss(url, bron, categorie):
+def parse_rss_regex(raw, bron, categorie, max_items=4):
+    """Robuuste parser die ook malformed XML aankan via regex."""
+    items = []
+    # Extraheer <item>…</item> blokken
+    blokken = re.findall(r'<item[^>]*>(.*?)</item>', raw, re.DOTALL)
+    for blok in blokken:
+        title = re.search(r'<title[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>', blok, re.DOTALL)
+        link  = re.search(r'<link[^>]*>(?:<!\[CDATA\[)?(https?://[^\s<"]+?)(?:\]\]>)?</link>', blok, re.DOTALL)
+        desc  = re.search(r'<description[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</description>', blok, re.DOTALL)
+
+        if not title or not link:
+            continue
+        title_txt = re.sub(r'<[^>]+>', '', title.group(1)).strip()
+        link_txt  = link.group(1).strip()
+        desc_txt  = re.sub(r'<[^>]+>', '', desc.group(1) if desc else '')[:140].strip()
+
+        if "verstappen" not in title_txt.lower():
+            continue
+
+        if desc_txt and not desc_txt.endswith("…"):
+            desc_txt += "…"
+
+        items.append({
+            "titel": title_txt, "url": link_txt,
+            "bron": bron, "categorie": categorie,
+            "samenvatting": desc_txt,
+        })
+        if len(items) >= max_items:
+            break
+    return items
+
+def parse_rss(url, bron, categorie, is_dutch):
     items = []
     try:
         r = requests.get(url, headers=HEADERS, timeout=10)
-        root = ET.fromstring(r.content)
-        ns = {"atom": "http://www.w3.org/2005/Atom"}
-
-        # Standaard RSS
-        for item in root.findall(".//item"):
-            title = item.findtext("title", "").strip()
-            link  = item.findtext("link",  "").strip()
-            desc  = item.findtext("description", "").strip()
-            # Filter op Verstappen
-            if "verstappen" not in title.lower() and "verstappen" not in desc.lower():
-                continue
-            # Strip HTML uit description
-            desc_clean = re.sub(r'<[^>]+>', '', desc)[:140].strip()
-            if desc_clean and not desc_clean.endswith("…"):
-                desc_clean += "…"
-            items.append({
-                "titel": title, "url": link,
-                "bron": bron, "categorie": categorie,
-                "samenvatting": desc_clean,
-            })
-            if len(items) >= 4:
-                break
-
-        # Atom feeds
-        if not items:
-            for entry in root.findall(".//atom:entry", ns):
-                title = entry.findtext("atom:title", "", ns).strip()
-                link_el = entry.find("atom:link", ns)
-                link = link_el.get("href", "") if link_el is not None else ""
-                if "verstappen" not in title.lower():
-                    continue
-                items.append({
-                    "titel": title, "url": link,
-                    "bron": bron, "categorie": categorie,
-                    "samenvatting": "",
-                })
-                if len(items) >= 4:
-                    break
-
+        if r.status_code != 200:
+            return items
+        raw = r.text
+        items = parse_rss_regex(raw, bron, categorie)
     except Exception as e:
         print(f"  {bron} fout: {e}")
     return items
 
 def haal_nieuws():
     alle = []
-    for url, bron, cat in RSS_BRONNEN:
+    dutch_count = 0
+
+    for url, bron, cat, is_dutch in RSS_BRONNEN:
+        # Sla Engelstalige bronnen over als we al genoeg Nederlands hebben
+        if not is_dutch and dutch_count >= 5:
+            continue
         print(f"  Ophalen: {bron}…")
-        resultaten = parse_rss(url, bron, cat)
+        resultaten = parse_rss(url, bron, cat, is_dutch)
+        if is_dutch:
+            dutch_count += len(resultaten)
         print(f"    → {len(resultaten)} Verstappen-items")
         alle.extend(resultaten)
         time.sleep(0.3)
