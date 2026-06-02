@@ -1,143 +1,193 @@
 #!/usr/bin/env python3
 """
-Verstappen Nieuws Scraper – via RSS feeds
+Verstappen Nieuws Scraper
+- Haalt nieuws van alle grote NL + EN racingsites
+- Filtert op Max Verstappen, GT, Simracing, volgende F1-race
+- Vertaalt Engelse koppen automatisch naar Nederlands
+- Linkt altijd naar het originele artikel
 """
 
-import requests
-import xml.etree.ElementTree as ET
+import requests, re, time
 from datetime import datetime, timezone, timedelta
-import re, time
+from deep_translator import GoogleTranslator
 
 AMSTERDAM = timezone(timedelta(hours=2))
 NOW = datetime.now(AMSTERDAM)
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; VerstappenBot/1.0)"}
 
-# ─── RACE KALENDER 2026 ────────────────────────────────────────────────────
+# ─── ZOEKTERMEN (filter) ──────────────────────────────────────────────────
+TERMEN_MAX = ["verstappen"]
+TERMEN_RACE = []  # Wordt gevuld met naam volgende race
+
+# ─── RACE KALENDER 2026 ───────────────────────────────────────────────────
 RACES_2026 = [
-    ("🇲🇨", "Grand Prix van Monaco",        "Circuit de Monaco",              "2026-06-07T15:00:00+02:00"),
-    ("🇨🇦", "Grand Prix van Canada",        "Circuit Gilles Villeneuve",      "2026-06-14T14:00:00-04:00"),
-    ("🇪🇸", "Grand Prix van Spanje",        "Circuit de Barcelona-Catalunya", "2026-06-21T15:00:00+02:00"),
-    ("🇦🇹", "Grand Prix van Oostenrijk",    "Red Bull Ring",                  "2026-06-28T15:00:00+02:00"),
-    ("🇬🇧", "Grand Prix van Groot-Brittannië","Silverstone Circuit",          "2026-07-05T15:00:00+01:00"),
-    ("🇧🇪", "Grand Prix van België",        "Circuit de Spa-Francorchamps",   "2026-07-26T15:00:00+02:00"),
-    ("🇭🇺", "Grand Prix van Hongarije",     "Hungaroring",                    "2026-08-02T15:00:00+02:00"),
-    ("🇳🇱", "Grand Prix van Nederland",     "Circuit Zandvoort",              "2026-08-30T15:00:00+02:00"),
-    ("🇮🇹", "Grand Prix van Italië",        "Autodromo Nazionale Monza",      "2026-09-06T15:00:00+02:00"),
-    ("🇦🇿", "Grand Prix van Azerbeidzjan",  "Baku City Circuit",              "2026-09-20T15:00:00+04:00"),
-    ("🇸🇬", "Grand Prix van Singapore",     "Marina Bay Street Circuit",      "2026-10-04T20:00:00+08:00"),
-    ("🇺🇸", "Grand Prix van de VS",         "Circuit of the Americas",        "2026-10-18T14:00:00-05:00"),
-    ("🇲🇽", "Grand Prix van Mexico",        "Autodromo Hermanos Rodriguez",   "2026-10-25T14:00:00-06:00"),
-    ("🇧🇷", "Grand Prix van Brazilië",      "Autodromo José Carlos Pace",     "2026-11-08T14:00:00-03:00"),
-    ("🇦🇪", "Grand Prix van Abu Dhabi",     "Yas Marina Circuit",             "2026-11-29T17:00:00+04:00"),
+    ("🇲🇨", "Grand Prix van Monaco",           "Circuit de Monaco",              "Monaco",      "2026-06-07T15:00:00+02:00"),
+    ("🇨🇦", "Grand Prix van Canada",           "Circuit Gilles Villeneuve",      "Canadian",    "2026-06-14T14:00:00-04:00"),
+    ("🇪🇸", "Grand Prix van Spanje",           "Circuit de Barcelona-Catalunya", "Spanish",     "2026-06-21T15:00:00+02:00"),
+    ("🇦🇹", "Grand Prix van Oostenrijk",       "Red Bull Ring",                  "Austrian",    "2026-06-28T15:00:00+02:00"),
+    ("🇬🇧", "Grand Prix van Groot-Brittannië", "Silverstone Circuit",            "British",     "2026-07-05T15:00:00+01:00"),
+    ("🇧🇪", "Grand Prix van België",           "Circuit de Spa-Francorchamps",   "Belgian",     "2026-07-26T15:00:00+02:00"),
+    ("🇭🇺", "Grand Prix van Hongarije",        "Hungaroring",                    "Hungarian",   "2026-08-02T15:00:00+02:00"),
+    ("🇳🇱", "Grand Prix van Nederland",        "Circuit Zandvoort",              "Dutch",       "2026-08-30T15:00:00+02:00"),
+    ("🇮🇹", "Grand Prix van Italië",           "Autodromo Nazionale Monza",      "Italian",     "2026-09-06T15:00:00+02:00"),
+    ("🇦🇿", "Grand Prix van Azerbeidzjan",     "Baku City Circuit",              "Azerbaijan",  "2026-09-20T15:00:00+04:00"),
+    ("🇸🇬", "Grand Prix van Singapore",        "Marina Bay Street Circuit",      "Singapore",   "2026-10-04T20:00:00+08:00"),
+    ("🇺🇸", "Grand Prix van de VS",            "Circuit of the Americas",        "US",          "2026-10-18T14:00:00-05:00"),
+    ("🇲🇽", "Grand Prix van Mexico",           "Autodromo Hermanos Rodriguez",   "Mexico",      "2026-10-25T14:00:00-06:00"),
+    ("🇧🇷", "Grand Prix van Brazilië",         "Autodromo José Carlos Pace",     "Brazilian",   "2026-11-08T14:00:00-03:00"),
+    ("🇦🇪", "Grand Prix van Abu Dhabi",        "Yas Marina Circuit",             "Abu Dhabi",   "2026-11-29T17:00:00+04:00"),
 ]
 
 def volgende_race():
     now_utc = datetime.now(timezone.utc)
-    for vlag, naam, circuit, iso in RACES_2026:
+    for vlag, naam, circuit, en_naam, iso in RACES_2026:
         race_dt = datetime.fromisoformat(iso).astimezone(timezone.utc)
         if race_dt > now_utc:
             local_dt = datetime.fromisoformat(iso)
-            dagen = ["maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag","zondag"]
-            maanden = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"]
+            dagen   = ["maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag","zondag"]
+            maanden = ["januari","februari","maart","april","mei","juni","juli",
+                       "augustus","september","oktober","november","december"]
             dag_str = f"{dagen[local_dt.weekday()]} {local_dt.day} {maanden[local_dt.month-1]} {local_dt.year}"
-            offset = local_dt.utcoffset().total_seconds() / 3600
-            tz_label = "CEST" if offset == 2 else "CET" if offset == 1 else f"UTC+{int(offset)}"
+            offset  = local_dt.utcoffset().total_seconds() / 3600
+            tz_lbl  = "CEST" if offset == 2 else "CET" if offset == 1 else f"UTC+{int(offset)}"
             return {
                 "vlag": vlag, "naam": naam, "circuit": circuit,
-                "datum_lang": f"{dag_str} · {local_dt.strftime('%H:%M')} lokale tijd ({tz_label})",
+                "en_naam": en_naam,
+                "datum_lang": f"{dag_str} · {local_dt.strftime('%H:%M')} lokale tijd ({tz_lbl})",
                 "iso": iso,
             }
     return None
 
-# ─── RSS FEEDS (Nederlandse bronnen eerst) ────────────────────────────────
+# ─── RSS BRONNEN (NL eerst, dan EN) ──────────────────────────────────────
 RSS_BRONNEN = [
-    ("https://www.formule1.nl/feed/",           "Formule1.nl",   "f1", True),
-    ("https://www.racingnews365.com/feed",       "RacingNews365", "f1", True),
-    ("https://nos.nl/sport/formule1/rss.xml",    "NOS Sport",     "f1", True),
-    ("https://www.motorsport.com/rss/f1/news/",  "Motorsport.com","f1", False),
-    ("https://www.autosport.com/rss/f1/news/",   "Autosport",     "f1", False),
+    # Nederlandse bronnen
+    ("https://www.formule1.nl/feed/",                                        "Formule1.nl",    "f1",  "nl"),
+    ("https://www.racingnews365.com/feed",                                   "RacingNews365",  "f1",  "nl"),
+    ("https://nos.nl/sport/formule1/rss.xml",                                "NOS Sport",      "f1",  "nl"),
+    # Engelstalige bronnen
+    ("https://www.motorsport.com/rss/f1/news/",                              "Motorsport.com", "f1",  "en"),
+    ("https://www.autosport.com/rss/f1/news/",                               "Autosport",      "f1",  "en"),
+    ("https://www.racefans.net/feed/",                                       "RaceFans",       "f1",  "en"),
+    ("https://www.thecheckeredflag.co.uk/feed/",                             "CheckeredFlag",  "f1",  "en"),
+    ("https://planetf1.com/feed/",                                           "PlanetF1",       "f1",  "en"),
+    ("https://www.formula1.com/content/fom-website/en/latest/all.rss.html", "Formula1.com",   "f1",  "en"),
 ]
 
-def parse_rss_regex(raw, bron, categorie, max_items=4):
-    """Robuuste parser die ook malformed XML aankan via regex."""
+# ─── PARSER ───────────────────────────────────────────────────────────────
+def parse_rss_regex(raw, bron, categorie, taal, race_termen):
     items = []
-    # Extraheer <item>…</item> blokken
     blokken = re.findall(r'<item[^>]*>(.*?)</item>', raw, re.DOTALL)
     for blok in blokken:
-        title = re.search(r'<title[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>', blok, re.DOTALL)
-        link  = re.search(r'<link[^>]*>(?:<!\[CDATA\[)?(https?://[^\s<"]+?)(?:\]\]>)?</link>', blok, re.DOTALL)
-        desc  = re.search(r'<description[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</description>', blok, re.DOTALL)
+        title_m = re.search(r'<title[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</title>', blok, re.DOTALL)
+        link_m  = re.search(r'<link[^>]*>\s*(?:<!\[CDATA\[)?(https?://[^\s<"]+?)(?:\]\]>)?\s*</link>', blok, re.DOTALL)
+        desc_m  = re.search(r'<description[^>]*>(?:<!\[CDATA\[)?(.*?)(?:\]\]>)?</description>', blok, re.DOTALL)
 
-        if not title or not link:
-            continue
-        title_txt = re.sub(r'<[^>]+>', '', title.group(1)).strip()
-        link_txt  = link.group(1).strip()
-        desc_txt  = re.sub(r'<[^>]+>', '', desc.group(1) if desc else '')[:140].strip()
-
-        if "verstappen" not in title_txt.lower():
+        if not title_m or not link_m:
             continue
 
-        if desc_txt and not desc_txt.endswith("…"):
-            desc_txt += "…"
+        title_raw = re.sub(r'<[^>]+>', '', title_m.group(1)).strip()
+        link_url  = link_m.group(1).strip()
+        desc_raw  = re.sub(r'<[^>]+>', '', desc_m.group(1) if desc_m else '').strip()
+        combined  = (title_raw + " " + desc_raw).lower()
+
+        # Filter: alleen Verstappen, GT, simracing of volgende race
+        relevant = (
+            any(t in combined for t in TERMEN_MAX) or
+            any(t.lower() in combined for t in race_termen) or
+            "gt3" in combined or "gt racing" in combined or "nürburgring" in combined or
+            "simracing" in combined or "sim racing" in combined or "esports" in combined
+        )
+        if not relevant:
+            continue
+
+        # Bepaal categorie op basis van inhoud
+        if "gt3" in combined or "gt racing" in combined or "nürburgring" in combined or "endurance" in combined:
+            categorie = "gt"
+        elif "simracing" in combined or "sim racing" in combined or "esports" in combined or "iracing" in combined:
+            categorie = "sim"
+        else:
+            categorie = "f1"
 
         items.append({
-            "titel": title_txt, "url": link_txt,
-            "bron": bron, "categorie": categorie,
-            "samenvatting": desc_txt,
+            "titel_orig": title_raw,
+            "url": link_url,
+            "bron": bron,
+            "categorie": categorie,
+            "taal": taal,
+            "samenvatting_orig": desc_raw[:200],
         })
-        if len(items) >= max_items:
+        if len(items) >= 5:
             break
     return items
 
-def parse_rss(url, bron, categorie, is_dutch):
-    items = []
-    try:
-        r = requests.get(url, headers=HEADERS, timeout=10)
-        if r.status_code != 200:
-            return items
-        raw = r.text
-        items = parse_rss_regex(raw, bron, categorie)
-    except Exception as e:
-        print(f"  {bron} fout: {e}")
+# ─── VERTALING ────────────────────────────────────────────────────────────
+def vertaal_batch(items):
+    """Vertaal titel + samenvatting van Engelse items naar Nederlands."""
+    translator = GoogleTranslator(source='en', target='nl')
+    for item in items:
+        if item["taal"] == "en":
+            try:
+                item["titel"] = translator.translate(item["titel_orig"])
+                time.sleep(0.15)
+                if item["samenvatting_orig"]:
+                    item["samenvatting"] = translator.translate(item["samenvatting_orig"][:500])
+                    time.sleep(0.15)
+                else:
+                    item["samenvatting"] = ""
+            except Exception as e:
+                print(f"  Vertaalfout: {e}")
+                item["titel"] = item["titel_orig"]
+                item["samenvatting"] = item["samenvatting_orig"]
+        else:
+            item["titel"] = item["titel_orig"]
+            item["samenvatting"] = item["samenvatting_orig"][:140] + "…" if item["samenvatting_orig"] else ""
     return items
 
-def haal_nieuws():
+# ─── ALLES OPHALEN ────────────────────────────────────────────────────────
+def haal_nieuws(race):
+    race_termen = [race["naam"], race["en_naam"], race["circuit"]] if race else []
+
     alle = []
-    dutch_count = 0
+    for url, bron, cat, taal in RSS_BRONNEN:
+        print(f"  {bron}…")
+        try:
+            r = requests.get(url, headers=HEADERS, timeout=10)
+            if r.status_code == 200:
+                resultaten = parse_rss_regex(r.text, bron, cat, taal, race_termen)
+                print(f"    → {len(resultaten)} items")
+                alle.extend(resultaten)
+        except Exception as e:
+            print(f"    Fout: {e}")
+        time.sleep(0.2)
 
-    for url, bron, cat, is_dutch in RSS_BRONNEN:
-        # Sla Engelstalige bronnen over als we al genoeg Nederlands hebben
-        if not is_dutch and dutch_count >= 5:
-            continue
-        print(f"  Ophalen: {bron}…")
-        resultaten = parse_rss(url, bron, cat, is_dutch)
-        if is_dutch:
-            dutch_count += len(resultaten)
-        print(f"    → {len(resultaten)} Verstappen-items")
-        alle.extend(resultaten)
-        time.sleep(0.3)
-
-    # Dedupliceren op titel
+    # Dedupliceren
     gezien, uniek = set(), []
     for item in alle:
-        sleutel = re.sub(r'\W+', '', item["titel"].lower())[:50]
+        sleutel = re.sub(r'\W+', '', item["titel_orig"].lower())[:50]
         if sleutel not in gezien:
             gezien.add(sleutel)
             uniek.append(item)
 
+    uniek = uniek[:12]  # Max 12 voor vertaling
+
+    print(f"\n  Vertalen ({sum(1 for i in uniek if i['taal']=='en')} Engelse items)…")
+    uniek = vertaal_batch(uniek)
+
     return uniek[:9]
 
-# ─── HTML ─────────────────────────────────────────────────────────────────
+# ─── HTML GENEREREN ───────────────────────────────────────────────────────
 def cat_label(cat):
-    return {"f1":"F1","gt":"GT","sim":"SIM","alg":"ALGEMEEN"}.get(cat,"F1")
+    return {"f1": "F1", "gt": "GT", "sim": "SIM", "alg": "ALGEMEEN"}.get(cat, "F1")
 
 def nieuws_cards(items):
     if not items:
         return '<div class="no-news">Geen nieuws gevonden — probeer het later opnieuw.</div>'
     html = ""
     for item in items:
-        cat = item.get("categorie","f1")
-        samenvatting = item.get("samenvatting","")
+        cat = item.get("categorie", "f1")
+        samenvatting = item.get("samenvatting", "")
+        if samenvatting and len(samenvatting) > 140:
+            samenvatting = samenvatting[:137] + "…"
         summary_html = f'<div class="card-summary">{samenvatting}</div>' if samenvatting else ""
         html += f'''<a class="news-card cat-{cat}-card" href="{item['url']}" target="_blank" rel="noopener" data-cat="{cat}">
   <div>
@@ -153,14 +203,15 @@ def nieuws_cards(items):
     return html
 
 def genereer_html(nieuws, race):
-    dagen = ["maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag","zondag"]
-    maanden = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"]
+    dagen   = ["maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag","zondag"]
+    maanden = ["januari","februari","maart","april","mei","juni","juli",
+               "augustus","september","oktober","november","december"]
     datum_nl = f"{dagen[NOW.weekday()]} {NOW.day} {maanden[NOW.month-1]} {NOW.year}"
 
     race_vlag    = race["vlag"]      if race else "🏁"
     race_naam    = race["naam"]      if race else "Seizoen afgelopen"
     race_circuit = race["circuit"]   if race else ""
-    race_datum   = race["datum_lang"]if race else ""
+    race_datum   = race["datum_lang"] if race else ""
     race_iso     = race["iso"]       if race else ""
     cards        = nieuws_cards(nieuws)
 
@@ -168,7 +219,7 @@ def genereer_html(nieuws, race):
 {{
   "name": "Verstappen Nieuws",
   "schemaVersion": 1,
-  "description": "Dagelijks Nederlandstalig nieuwsoverzicht over Max Verstappen (F1 & GT), automatisch bijgewerkt via AI.",
+  "description": "Dagelijks Nederlandstalig nieuwsoverzicht over Max Verstappen (F1, GT, Simracing), automatisch bijgewerkt.",
   "mcpTools": [],
   "mcpServerNames": []
 }}
@@ -307,13 +358,17 @@ function filter(cat,btn){{
 </body>
 </html>'''
 
+# ─── MAIN ─────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    print("Nieuws ophalen via RSS...")
-    nieuws = haal_nieuws()
-    print(f"\nTotaal: {len(nieuws)} unieke artikelen")
+    print("Volgende race bepalen…")
     race = volgende_race()
-    print(f"Volgende race: {race['naam'] if race else 'geen'}")
+    print(f"→ {race['naam'] if race else 'geen'}")
+
+    print("\nNieuws ophalen…")
+    nieuws = haal_nieuws(race)
+    print(f"\nTotaal: {len(nieuws)} unieke artikelen")
+
     html = genereer_html(nieuws, race)
-    with open("index.html","w",encoding="utf-8") as f:
+    with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
     print("index.html geschreven ✓")
