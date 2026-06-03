@@ -34,4 +34,4 @@ jobs:
           git add index.html
           git diff --cached --quiet && echo "Geen wijzigingen" && exit 0
           git commit -m "Dagelijkse update $(TZ='Europe/Amsterdam' date '+%Y-%m-%d %H:%M')"
-          git push --force origin main
+          git push --force origin HEAD:main
