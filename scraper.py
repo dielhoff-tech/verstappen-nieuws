@@ -19,42 +19,161 @@ HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; VerstappenBot/1.0)"}
 TERMEN_MAX = ["verstappen"]
 TERMEN_RACE = []  # Wordt gevuld met naam volgende race
 
-# ─── RACE KALENDER 2026 ───────────────────────────────────────────────────
+# ─── RACE KALENDER 2026 (met alle sessies) ───────────────────────────────
+AMSTERDAM = timezone(timedelta(hours=2))  # CEST
+
+def s(iso): return iso  # shorthand
+
 RACES_2026 = [
-    ("🇲🇨", "Grand Prix van Monaco",           "Circuit de Monaco",              "Monaco",      "2026-06-07T15:00:00+02:00"),
-    ("🇨🇦", "Grand Prix van Canada",           "Circuit Gilles Villeneuve",      "Canadian",    "2026-06-14T14:00:00-04:00"),
-    ("🇪🇸", "Grand Prix van Spanje",           "Circuit de Barcelona-Catalunya", "Spanish",     "2026-06-21T15:00:00+02:00"),
-    ("🇦🇹", "Grand Prix van Oostenrijk",       "Red Bull Ring",                  "Austrian",    "2026-06-28T15:00:00+02:00"),
-    ("🇬🇧", "Grand Prix van Groot-Brittannië", "Silverstone Circuit",            "British",     "2026-07-05T15:00:00+01:00"),
-    ("🇧🇪", "Grand Prix van België",           "Circuit de Spa-Francorchamps",   "Belgian",     "2026-07-26T15:00:00+02:00"),
-    ("🇭🇺", "Grand Prix van Hongarije",        "Hungaroring",                    "Hungarian",   "2026-08-02T15:00:00+02:00"),
-    ("🇳🇱", "Grand Prix van Nederland",        "Circuit Zandvoort",              "Dutch",       "2026-08-30T15:00:00+02:00"),
-    ("🇮🇹", "Grand Prix van Italië",           "Autodromo Nazionale Monza",      "Italian",     "2026-09-06T15:00:00+02:00"),
-    ("🇦🇿", "Grand Prix van Azerbeidzjan",     "Baku City Circuit",              "Azerbaijan",  "2026-09-20T15:00:00+04:00"),
-    ("🇸🇬", "Grand Prix van Singapore",        "Marina Bay Street Circuit",      "Singapore",   "2026-10-04T20:00:00+08:00"),
-    ("🇺🇸", "Grand Prix van de VS",            "Circuit of the Americas",        "US",          "2026-10-18T14:00:00-05:00"),
-    ("🇲🇽", "Grand Prix van Mexico",           "Autodromo Hermanos Rodriguez",   "Mexico",      "2026-10-25T14:00:00-06:00"),
-    ("🇧🇷", "Grand Prix van Brazilië",         "Autodromo José Carlos Pace",     "Brazilian",   "2026-11-08T14:00:00-03:00"),
-    ("🇦🇪", "Grand Prix van Abu Dhabi",        "Yas Marina Circuit",             "Abu Dhabi",   "2026-11-29T17:00:00+04:00"),
+  { "vlag":"🇲🇨","naam":"Grand Prix van Monaco",           "circuit":"Circuit de Monaco",              "en_naam":"Monaco",
+    "sessies":[
+      ("🔵","Vrije Training 1", "2026-06-05T13:30:00+02:00"),
+      ("🔵","Vrije Training 2", "2026-06-05T17:00:00+02:00"),
+      ("🔵","Vrije Training 3", "2026-06-06T12:30:00+02:00"),
+      ("🟡","Kwalificatie",     "2026-06-06T16:00:00+02:00"),
+      ("🔴","Race",             "2026-06-07T15:00:00+02:00"),
+    ]},
+  { "vlag":"🇨🇦","naam":"Grand Prix van Canada",           "circuit":"Circuit Gilles Villeneuve",      "en_naam":"Canadian",
+    "sessies":[
+      ("🔵","Vrije Training 1", "2026-06-12T13:30:00-04:00"),
+      ("🔵","Vrije Training 2", "2026-06-12T17:00:00-04:00"),
+      ("🔵","Vrije Training 3", "2026-06-13T12:30:00-04:00"),
+      ("🟡","Kwalificatie",     "2026-06-13T16:00:00-04:00"),
+      ("🔴","Race",             "2026-06-14T14:00:00-04:00"),
+    ]},
+  { "vlag":"🇪🇸","naam":"Grand Prix van Spanje",           "circuit":"Circuit de Barcelona-Catalunya", "en_naam":"Spanish",
+    "sessies":[
+      ("🔵","Vrije Training 1", "2026-06-19T13:30:00+02:00"),
+      ("🔵","Vrije Training 2", "2026-06-19T17:00:00+02:00"),
+      ("🔵","Vrije Training 3", "2026-06-20T12:30:00+02:00"),
+      ("🟡","Kwalificatie",     "2026-06-20T16:00:00+02:00"),
+      ("🔴","Race",             "2026-06-21T15:00:00+02:00"),
+    ]},
+  { "vlag":"🇦🇹","naam":"Grand Prix van Oostenrijk",       "circuit":"Red Bull Ring",                  "en_naam":"Austrian",
+    "sessies":[
+      ("🔵","Vrije Training 1", "2026-06-26T13:30:00+02:00"),
+      ("🔵","Vrije Training 2", "2026-06-26T17:00:00+02:00"),
+      ("🔵","Vrije Training 3", "2026-06-27T12:30:00+02:00"),
+      ("🟡","Kwalificatie",     "2026-06-27T16:00:00+02:00"),
+      ("🔴","Race",             "2026-06-28T15:00:00+02:00"),
+    ]},
+  { "vlag":"🇬🇧","naam":"Grand Prix van Groot-Brittannië", "circuit":"Silverstone Circuit",            "en_naam":"British",
+    "sessies":[
+      ("🔵","Vrije Training 1", "2026-07-03T13:30:00+01:00"),
+      ("🔵","Vrije Training 2", "2026-07-03T17:00:00+01:00"),
+      ("🔵","Vrije Training 3", "2026-07-04T12:30:00+01:00"),
+      ("🟡","Kwalificatie",     "2026-07-04T16:00:00+01:00"),
+      ("🔴","Race",             "2026-07-05T15:00:00+01:00"),
+    ]},
+  { "vlag":"🇧🇪","naam":"Grand Prix van België",           "circuit":"Circuit de Spa-Francorchamps",   "en_naam":"Belgian",
+    "sessies":[
+      ("🔵","Vrije Training 1", "2026-07-24T13:30:00+02:00"),
+      ("🔵","Vrije Training 2", "2026-07-24T17:00:00+02:00"),
+      ("🔵","Vrije Training 3", "2026-07-25T12:30:00+02:00"),
+      ("🟡","Kwalificatie",     "2026-07-25T16:00:00+02:00"),
+      ("🔴","Race",             "2026-07-26T15:00:00+02:00"),
+    ]},
+  { "vlag":"🇭🇺","naam":"Grand Prix van Hongarije",        "circuit":"Hungaroring",                    "en_naam":"Hungarian",
+    "sessies":[
+      ("🔵","Vrije Training 1", "2026-07-31T13:30:00+02:00"),
+      ("🔵","Vrije Training 2", "2026-07-31T17:00:00+02:00"),
+      ("🔵","Vrije Training 3", "2026-08-01T12:30:00+02:00"),
+      ("🟡","Kwalificatie",     "2026-08-01T16:00:00+02:00"),
+      ("🔴","Race",             "2026-08-02T15:00:00+02:00"),
+    ]},
+  { "vlag":"🇳🇱","naam":"Grand Prix van Nederland",        "circuit":"Circuit Zandvoort",              "en_naam":"Dutch",
+    "sessies":[
+      ("🔵","Vrije Training 1", "2026-08-28T12:30:00+02:00"),
+      ("🔵","Vrije Training 2", "2026-08-28T16:00:00+02:00"),
+      ("🔵","Vrije Training 3", "2026-08-29T11:30:00+02:00"),
+      ("🟡","Kwalificatie",     "2026-08-29T15:00:00+02:00"),
+      ("🔴","Race",             "2026-08-30T15:00:00+02:00"),
+    ]},
+  { "vlag":"🇮🇹","naam":"Grand Prix van Italië",           "circuit":"Autodromo Nazionale Monza",      "en_naam":"Italian",
+    "sessies":[
+      ("🔵","Vrije Training 1", "2026-09-04T13:30:00+02:00"),
+      ("🔵","Vrije Training 2", "2026-09-04T17:00:00+02:00"),
+      ("🔵","Vrije Training 3", "2026-09-05T12:30:00+02:00"),
+      ("🟡","Kwalificatie",     "2026-09-05T16:00:00+02:00"),
+      ("🔴","Race",             "2026-09-06T15:00:00+02:00"),
+    ]},
+  { "vlag":"🇦🇿","naam":"Grand Prix van Azerbeidzjan",     "circuit":"Baku City Circuit",              "en_naam":"Azerbaijan",
+    "sessies":[
+      ("🔵","Vrije Training 1", "2026-09-18T13:30:00+04:00"),
+      ("🔵","Vrije Training 2", "2026-09-18T17:00:00+04:00"),
+      ("🔵","Vrije Training 3", "2026-09-19T12:30:00+04:00"),
+      ("🟡","Kwalificatie",     "2026-09-19T16:00:00+04:00"),
+      ("🔴","Race",             "2026-09-20T15:00:00+04:00"),
+    ]},
+  { "vlag":"🇸🇬","naam":"Grand Prix van Singapore",        "circuit":"Marina Bay Street Circuit",      "en_naam":"Singapore",
+    "sessies":[
+      ("🔵","Vrije Training 1", "2026-10-02T17:30:00+08:00"),
+      ("🔵","Vrije Training 2", "2026-10-02T21:00:00+08:00"),
+      ("🔵","Vrije Training 3", "2026-10-03T17:30:00+08:00"),
+      ("🟡","Kwalificatie",     "2026-10-03T21:00:00+08:00"),
+      ("🔴","Race",             "2026-10-04T20:00:00+08:00"),
+    ]},
+  { "vlag":"🇺🇸","naam":"Grand Prix van de VS",            "circuit":"Circuit of the Americas",        "en_naam":"US",
+    "sessies":[
+      ("🔵","Vrije Training 1", "2026-10-16T13:30:00-05:00"),
+      ("🔵","Vrije Training 2", "2026-10-16T17:00:00-05:00"),
+      ("🔵","Vrije Training 3", "2026-10-17T12:30:00-05:00"),
+      ("🟡","Kwalificatie",     "2026-10-17T16:00:00-05:00"),
+      ("🔴","Race",             "2026-10-18T14:00:00-05:00"),
+    ]},
+  { "vlag":"🇲🇽","naam":"Grand Prix van Mexico",           "circuit":"Autodromo Hermanos Rodriguez",   "en_naam":"Mexico",
+    "sessies":[
+      ("🔵","Vrije Training 1", "2026-10-23T13:30:00-06:00"),
+      ("🔵","Vrije Training 2", "2026-10-23T17:00:00-06:00"),
+      ("🔵","Vrije Training 3", "2026-10-24T12:30:00-06:00"),
+      ("🟡","Kwalificatie",     "2026-10-24T16:00:00-06:00"),
+      ("🔴","Race",             "2026-10-25T14:00:00-06:00"),
+    ]},
+  { "vlag":"🇧🇷","naam":"Grand Prix van Brazilië",         "circuit":"Autodromo José Carlos Pace",     "en_naam":"Brazilian",
+    "sessies":[
+      ("🔵","Vrije Training 1", "2026-11-06T13:30:00-03:00"),
+      ("🔵","Vrije Training 2", "2026-11-06T17:00:00-03:00"),
+      ("🔵","Vrije Training 3", "2026-11-07T12:30:00-03:00"),
+      ("🟡","Kwalificatie",     "2026-11-07T16:00:00-03:00"),
+      ("🔴","Race",             "2026-11-08T14:00:00-03:00"),
+    ]},
+  { "vlag":"🇦🇪","naam":"Grand Prix van Abu Dhabi",        "circuit":"Yas Marina Circuit",             "en_naam":"Abu Dhabi",
+    "sessies":[
+      ("🔵","Vrije Training 1", "2026-11-27T13:30:00+04:00"),
+      ("🔵","Vrije Training 2", "2026-11-27T17:00:00+04:00"),
+      ("🔵","Vrije Training 3", "2026-11-28T13:30:00+04:00"),
+      ("🟡","Kwalificatie",     "2026-11-28T17:00:00+04:00"),
+      ("🔴","Race",             "2026-11-29T17:00:00+04:00"),
+    ]},
 ]
+
+def sessie_naar_amsterdam(iso):
+    """Converteer sessietijd naar Amsterdam tijd string."""
+    dt = datetime.fromisoformat(iso).astimezone(AMSTERDAM)
+    dagen = ["ma","di","wo","do","vr","za","zo"]
+    return f"{dagen[dt.weekday()]} {dt.day}/{dt.month} · {dt.strftime('%H:%M')}"
 
 def volgende_race():
     now_utc = datetime.now(timezone.utc)
-    for vlag, naam, circuit, en_naam, iso in RACES_2026:
-        race_dt = datetime.fromisoformat(iso).astimezone(timezone.utc)
+    for race in RACES_2026:
+        race_iso = race["sessies"][-1][2]  # Race is altijd laatste sessie
+        race_dt = datetime.fromisoformat(race_iso).astimezone(timezone.utc)
         if race_dt > now_utc:
-            local_dt = datetime.fromisoformat(iso)
+            local_dt = datetime.fromisoformat(race_iso)
             dagen   = ["maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag","zondag"]
             maanden = ["januari","februari","maart","april","mei","juni","juli",
                        "augustus","september","oktober","november","december"]
             dag_str = f"{dagen[local_dt.weekday()]} {local_dt.day} {maanden[local_dt.month-1]} {local_dt.year}"
-            offset  = local_dt.utcoffset().total_seconds() / 3600
-            tz_lbl  = "CEST" if offset == 2 else "CET" if offset == 1 else f"UTC+{int(offset)}"
+            # Amsterdam tijd voor de race
+            race_ams = datetime.fromisoformat(race_iso).astimezone(AMSTERDAM)
             return {
-                "vlag": vlag, "naam": naam, "circuit": circuit,
-                "en_naam": en_naam,
-                "datum_lang": f"{dag_str} · {local_dt.strftime('%H:%M')} lokale tijd ({tz_lbl})",
-                "iso": iso,
+                "vlag":       race["vlag"],
+                "naam":       race["naam"],
+                "circuit":    race["circuit"],
+                "en_naam":    race["en_naam"],
+                "datum_lang": f"{dag_str} · {race_ams.strftime('%H:%M')} Amsterdam tijd",
+                "iso":        race_ams.isoformat(),
+                "sessies":    race["sessies"],
             }
     return None
 
@@ -202,18 +321,43 @@ def nieuws_cards(items):
 </a>\n'''
     return html
 
+def sessie_rows(race):
+    """Genereer HTML rijen voor alle sessies van het weekend."""
+    if not race or "sessies" not in race:
+        return ""
+    now_utc = datetime.now(timezone.utc)
+    rows = ""
+    for icoon, naam, iso in race["sessies"]:
+        dt_utc = datetime.fromisoformat(iso).astimezone(timezone.utc)
+        dt_ams = datetime.fromisoformat(iso).astimezone(AMSTERDAM)
+        voorbij = dt_utc < now_utc
+        is_race = naam == "Race"
+        dagen_kort = ["ma","di","wo","do","vr","za","zo"]
+        dag_lbl = f"{dagen_kort[dt_ams.weekday()]} {dt_ams.day}/{dt_ams.month}"
+        tijd_lbl = dt_ams.strftime("%H:%M")
+        status_cls = "sessie-done" if voorbij else ("sessie-race" if is_race else "sessie-upcoming")
+        status_dot = "✓" if voorbij else ("🏁" if is_race else "◉")
+        rows += f'''<div class="sessie-row {status_cls}">
+  <span class="sessie-dot">{status_dot}</span>
+  <span class="sessie-naam">{naam}</span>
+  <span class="sessie-tijd">{dag_lbl} · {tijd_lbl}</span>
+</div>\n'''
+    return rows
+
 def genereer_html(nieuws, race):
     dagen   = ["maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag","zondag"]
     maanden = ["januari","februari","maart","april","mei","juni","juli",
                "augustus","september","oktober","november","december"]
-    datum_nl = f"{dagen[NOW.weekday()]} {NOW.day} {maanden[NOW.month-1]} {NOW.year}"
+    now_ams  = datetime.now(AMSTERDAM)
+    datum_nl = f"{dagen[now_ams.weekday()]} {now_ams.day} {maanden[now_ams.month-1]} {now_ams.year}"
 
-    race_vlag    = race["vlag"]      if race else "🏁"
-    race_naam    = race["naam"]      if race else "Seizoen afgelopen"
-    race_circuit = race["circuit"]   if race else ""
+    race_vlag    = race["vlag"]       if race else "🏁"
+    race_naam    = race["naam"]       if race else "Seizoen afgelopen"
+    race_circuit = race["circuit"]    if race else ""
     race_datum   = race["datum_lang"] if race else ""
-    race_iso     = race["iso"]       if race else ""
+    race_iso     = race["iso"]        if race else ""
     cards        = nieuws_cards(nieuws)
+    sessies_html = sessie_rows(race)
 
     return f'''<!DOCTYPE html><script type="application/json" id="cowork-artifact-meta">
 {{
@@ -244,18 +388,28 @@ def genereer_html(nieuws, race):
   .header-sub{{margin-left:auto;font-size:11px;color:rgba(255,255,255,.3);display:flex;align-items:center;gap:8px;flex-shrink:0}}
   .live-dot{{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;animation:blink 2s infinite;flex-shrink:0}}
   @keyframes blink{{0%,100%{{opacity:1}}50%{{opacity:.2}}}}
-  .next-race-bar{{background:linear-gradient(90deg,#0c1636,#121e44 40%,#160a0a);border-bottom:1px solid rgba(255,255,255,.06);padding:10px 28px;display:flex;align-items:center;gap:14px;overflow-x:auto;scrollbar-width:none}}
-  .next-race-bar::-webkit-scrollbar{{display:none}}
+  .race-blok{{background:linear-gradient(135deg,#0c1636 0%,#121e44 50%,#0f0a1a 100%);border-bottom:1px solid rgba(255,255,255,.08);padding:16px 28px 20px}}
+  .race-top{{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}}
   .nr-label{{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:#e8002d;white-space:nowrap;flex-shrink:0}}
   .nr-divider{{width:1px;height:24px;background:rgba(255,255,255,.1);flex-shrink:0}}
-  .nr-flag{{font-size:20px;flex-shrink:0}}
+  .nr-flag{{font-size:24px;flex-shrink:0}}
   .nr-info{{flex-shrink:0}}
-  .nr-race{{font-size:14px;font-weight:800;color:#fff;white-space:nowrap}}
-  .nr-date{{font-size:11px;color:rgba(255,255,255,.35);margin-top:1px}}
+  .nr-race{{font-size:16px;font-weight:800;color:#fff;white-space:nowrap}}
+  .nr-date{{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px}}
   .nr-countdown{{margin-left:auto;display:flex;gap:8px;flex-shrink:0}}
-  .nr-unit{{text-align:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:4px 10px}}
-  .nr-num{{font-size:18px;font-weight:900;color:#ffd700;line-height:1;font-variant-numeric:tabular-nums}}
-  .nr-lbl{{font-size:8px;color:rgba(255,255,255,.28);letter-spacing:1px;text-transform:uppercase}}
+  .nr-unit{{text-align:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:5px 12px}}
+  .nr-num{{font-size:22px;font-weight:900;color:#ffd700;line-height:1;font-variant-numeric:tabular-nums}}
+  .nr-lbl{{font-size:8px;color:rgba(255,255,255,.28);letter-spacing:1px;text-transform:uppercase;margin-top:2px}}
+  .sessies{{display:flex;gap:6px;flex-wrap:wrap}}
+  .sessie-row{{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);flex:1;min-width:140px}}
+  .sessie-done{{opacity:.35}}
+  .sessie-upcoming .sessie-dot{{color:#4ade80}}
+  .sessie-race{{border-color:rgba(232,0,45,.3);background:rgba(232,0,45,.07)}}
+  .sessie-race .sessie-naam{{color:#fff;font-weight:800}}
+  .sessie-race .sessie-dot{{color:#e8002d;font-size:14px}}
+  .sessie-dot{{font-size:11px;flex-shrink:0}}
+  .sessie-naam{{font-size:11px;font-weight:700;color:rgba(255,255,255,.7);flex:1}}
+  .sessie-tijd{{font-size:10px;color:rgba(255,255,255,.3);white-space:nowrap}}
   .filter-bar{{display:flex;gap:8px;padding:14px 28px;background:rgba(255,255,255,.015);border-bottom:1px solid rgba(255,255,255,.05);overflow-x:auto;scrollbar-width:none}}
   .filter-bar::-webkit-scrollbar{{display:none}}
   .filter-btn{{flex-shrink:0;padding:5px 16px;border-radius:20px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.38);font-size:11px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:all .15s;text-transform:uppercase}}
@@ -289,8 +443,11 @@ def genereer_html(nieuws, race):
     .header-title{{font-size:18px}}
     .header-eyebrow{{font-size:8px;letter-spacing:2px}}
     .header-sub{{margin-left:0;width:100%}}
-    .next-race-bar{{padding:8px 14px;flex-wrap:wrap;gap:8px}}
+    .race-blok{{padding:12px 14px 16px}}
+    .race-top{{gap:8px}}
     .nr-countdown{{margin-left:0;width:100%;justify-content:flex-start}}
+    .sessie-row{{min-width:120px}}
+    .sessie-naam{{font-size:10px}}
     .filter-bar{{padding:8px 14px;gap:6px}}
     .filter-btn{{padding:5px 12px;font-size:10px}}
     .news-section{{padding:14px 12px 28px}}
@@ -321,15 +478,18 @@ def genereer_html(nieuws, race):
   </div>
 </div>
 
-<div class="next-race-bar">
-  <div class="nr-label">Volgende Race</div>
-  <div class="nr-divider"></div>
-  <div class="nr-flag">{race_vlag}</div>
-  <div class="nr-info">
-    <div class="nr-race">{race_naam}</div>
-    <div class="nr-date">{race_circuit} · {race_datum}</div>
+<div class="race-blok">
+  <div class="race-top">
+    <div class="nr-label">Volgende Race</div>
+    <div class="nr-divider"></div>
+    <div class="nr-flag">{race_vlag}</div>
+    <div class="nr-info">
+      <div class="nr-race">{race_naam}</div>
+      <div class="nr-date">{race_circuit} · {race_datum}</div>
+    </div>
+    <div class="nr-countdown" id="countdown"></div>
   </div>
-  <div class="nr-countdown" id="countdown"></div>
+  <div class="sessies">{sessies_html}</div>
 </div>
 
 <div class="filter-bar">

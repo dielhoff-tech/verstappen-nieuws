@@ -10,7 +10,8 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>Max Verstappen Nieuws</title>
 <style>
   :root{color-scheme:dark}*{box-sizing:border-box;margin:0;padding:0}
@@ -26,18 +27,28 @@
   .header-sub{margin-left:auto;font-size:11px;color:rgba(255,255,255,.3);display:flex;align-items:center;gap:8px;flex-shrink:0}
   .live-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;animation:blink 2s infinite;flex-shrink:0}
   @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-  .next-race-bar{background:linear-gradient(90deg,#0c1636,#121e44 40%,#160a0a);border-bottom:1px solid rgba(255,255,255,.06);padding:10px 28px;display:flex;align-items:center;gap:14px;overflow-x:auto;scrollbar-width:none}
-  .next-race-bar::-webkit-scrollbar{display:none}
+  .race-blok{background:linear-gradient(135deg,#0c1636 0%,#121e44 50%,#0f0a1a 100%);border-bottom:1px solid rgba(255,255,255,.08);padding:16px 28px 20px}
+  .race-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
   .nr-label{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:#e8002d;white-space:nowrap;flex-shrink:0}
   .nr-divider{width:1px;height:24px;background:rgba(255,255,255,.1);flex-shrink:0}
-  .nr-flag{font-size:20px;flex-shrink:0}
+  .nr-flag{font-size:24px;flex-shrink:0}
   .nr-info{flex-shrink:0}
-  .nr-race{font-size:14px;font-weight:800;color:#fff;white-space:nowrap}
-  .nr-date{font-size:11px;color:rgba(255,255,255,.35);margin-top:1px}
+  .nr-race{font-size:16px;font-weight:800;color:#fff;white-space:nowrap}
+  .nr-date{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px}
   .nr-countdown{margin-left:auto;display:flex;gap:8px;flex-shrink:0}
-  .nr-unit{text-align:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:4px 10px}
-  .nr-num{font-size:18px;font-weight:900;color:#ffd700;line-height:1;font-variant-numeric:tabular-nums}
-  .nr-lbl{font-size:8px;color:rgba(255,255,255,.28);letter-spacing:1px;text-transform:uppercase}
+  .nr-unit{text-align:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:5px 12px}
+  .nr-num{font-size:22px;font-weight:900;color:#ffd700;line-height:1;font-variant-numeric:tabular-nums}
+  .nr-lbl{font-size:8px;color:rgba(255,255,255,.28);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+  .sessies{display:flex;gap:6px;flex-wrap:wrap}
+  .sessie-row{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);flex:1;min-width:140px}
+  .sessie-done{opacity:.35}
+  .sessie-upcoming .sessie-dot{color:#4ade80}
+  .sessie-race{border-color:rgba(232,0,45,.3);background:rgba(232,0,45,.07)}
+  .sessie-race .sessie-naam{color:#fff;font-weight:800}
+  .sessie-race .sessie-dot{color:#e8002d;font-size:14px}
+  .sessie-dot{font-size:11px;flex-shrink:0}
+  .sessie-naam{font-size:11px;font-weight:700;color:rgba(255,255,255,.7);flex:1}
+  .sessie-tijd{font-size:10px;color:rgba(255,255,255,.3);white-space:nowrap}
   .filter-bar{display:flex;gap:8px;padding:14px 28px;background:rgba(255,255,255,.015);border-bottom:1px solid rgba(255,255,255,.05);overflow-x:auto;scrollbar-width:none}
   .filter-bar::-webkit-scrollbar{display:none}
   .filter-btn{flex-shrink:0;padding:5px 16px;border-radius:20px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.38);font-size:11px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:all .15s;text-transform:uppercase}
@@ -59,20 +70,34 @@
   .cat-sim{background:rgba(168,85,247,.16);color:#d8b4fe;border:1px solid rgba(168,85,247,.22)}
   .cat-alg{background:rgba(255,255,255,.06);color:#999;border:1px solid rgba(255,255,255,.1)}
   .card-source{font-size:11px;color:rgba(255,255,255,.26)}
-  .card-date{font-size:10px;color:rgba(255,255,255,.2);margin-left:auto}
   .card-title{font-size:14px;font-weight:700;color:rgba(255,255,255,.88);line-height:1.35;margin-bottom:5px}
   .card-summary{font-size:12px;color:rgba(255,255,255,.36);line-height:1.6}
   .card-arrow{color:rgba(255,255,255,.18);font-size:18px;transition:color .15s;flex-shrink:0;padding-left:4px}
   .news-card:hover .card-arrow{color:#e8002d}
   .no-news{text-align:center;padding:48px;color:rgba(255,255,255,.14);font-size:13px}
   .footer{text-align:center;padding:0 0 32px;font-size:10px;color:rgba(255,255,255,.09);letter-spacing:.5px}
-  @media(max-width:600px){
-    .header-photos{height:160px}
-    .header-title-bar{padding:12px 16px}
-    .header-title{font-size:20px}
-    .header-sub{margin-left:0}
-    .next-race-bar,.filter-bar{padding:10px 16px}
-    .news-section{padding:18px 16px 32px}
+  @media(max-width:700px){
+    .header-photos{height:140px}
+    .header-title-bar{padding:10px 14px;gap:8px}
+    .header-title{font-size:18px}
+    .header-eyebrow{font-size:8px;letter-spacing:2px}
+    .header-sub{margin-left:0;width:100%}
+    .race-blok{padding:12px 14px 16px}
+    .race-top{gap:8px}
+    .nr-countdown{margin-left:0;width:100%;justify-content:flex-start}
+    .sessie-row{min-width:120px}
+    .sessie-naam{font-size:10px}
+    .filter-bar{padding:8px 14px;gap:6px}
+    .filter-btn{padding:5px 12px;font-size:10px}
+    .news-section{padding:14px 12px 28px}
+    .news-card{padding:12px 14px}
+    .card-title{font-size:13px}
+    .card-summary{font-size:11px;color:rgba(255,255,255,.3)}
+    .card-arrow{display:none}
+  }
+  @media(max-width:400px){
+    .header-title{font-size:16px}
+    .nr-num{font-size:14px}
     .card-summary{display:none}
   }
 </style>
@@ -87,20 +112,48 @@
     <h1 class="header-title">Max <em>Verstappen</em> Nieuws</h1>
     <div class="header-sub">
       <div class="live-dot"></div>
-      <span id="updateLabel">Bijgewerkt op woensdag 3 juni 2026 · Dagelijks om 23:00</span>
+      <span>Bijgewerkt op woensdag 3 juni 2026 · Dagelijks om 08:00 &amp; 18:00</span>
     </div>
   </div>
 </div>
 
-<div class="next-race-bar">
-  <div class="nr-label">Volgende Race</div>
-  <div class="nr-divider"></div>
-  <div class="nr-flag">🇲🇨</div>
-  <div class="nr-info">
-    <div class="nr-race">Grand Prix van Monaco</div>
-    <div class="nr-date">Circuit de Monaco · zondag 7 juni 2026 · 15:00 lokale tijd (CEST)</div>
+<div class="race-blok">
+  <div class="race-top">
+    <div class="nr-label">Volgende Race</div>
+    <div class="nr-divider"></div>
+    <div class="nr-flag">🇲🇨</div>
+    <div class="nr-info">
+      <div class="nr-race">Grand Prix van Monaco</div>
+      <div class="nr-date">Circuit de Monaco · zondag 7 juni 2026 · 15:00 Amsterdam tijd</div>
+    </div>
+    <div class="nr-countdown" id="countdown"></div>
   </div>
-  <div class="nr-countdown" id="countdown"></div>
+  <div class="sessies"><div class="sessie-row sessie-upcoming">
+  <span class="sessie-dot">◉</span>
+  <span class="sessie-naam">Vrije Training 1</span>
+  <span class="sessie-tijd">vr 5/6 · 13:30</span>
+</div>
+<div class="sessie-row sessie-upcoming">
+  <span class="sessie-dot">◉</span>
+  <span class="sessie-naam">Vrije Training 2</span>
+  <span class="sessie-tijd">vr 5/6 · 17:00</span>
+</div>
+<div class="sessie-row sessie-upcoming">
+  <span class="sessie-dot">◉</span>
+  <span class="sessie-naam">Vrije Training 3</span>
+  <span class="sessie-tijd">za 6/6 · 12:30</span>
+</div>
+<div class="sessie-row sessie-upcoming">
+  <span class="sessie-dot">◉</span>
+  <span class="sessie-naam">Kwalificatie</span>
+  <span class="sessie-tijd">za 6/6 · 16:00</span>
+</div>
+<div class="sessie-row sessie-race">
+  <span class="sessie-dot">🏁</span>
+  <span class="sessie-naam">Race</span>
+  <span class="sessie-tijd">zo 7/6 · 15:00</span>
+</div>
+</div>
 </div>
 
 <div class="filter-bar">
@@ -113,116 +166,230 @@
 
 <div class="news-section">
   <div class="section-label">Actueel nieuws</div>
-  <div class="news-list">
-
-    <a class="news-card cat-f1-card" href="https://www.gpfans.com/nl/f1-nieuws/1085101/verstappen-maakt-zich-op-voor-gp-van-monaco-kwalificatie-is-hier-cruciaal/" target="_blank" rel="noopener" data-cat="f1">
-      <div>
-        <div class="card-meta">
-          <span class="cat-tag cat-f1">F1</span>
-          <span class="card-source">GPFans.com</span>
-          <span class="card-date">3 juni 2026</span>
-        </div>
-        <div class="card-title">Verstappen hints op goed Monaco-resultaat: 'Positieve stappen gezet'</div>
-        <div class="card-summary">Na zijn eerste podiumfinish van 2026 in Canada reist Max Verstappen optimistisch af naar Monaco. De Nederlander benadrukt dat de RB22 grote stappen vooruit heeft gemaakt in Miami en Montreal, al waarschuwt hij dat de kwalificatie op zaterdag cruciaal zal zijn op het smalle stratencircuit.</div>
-      </div>
-      <div class="card-arrow">↗</div>
-    </a>
-
-    <a class="news-card cat-f1-card" href="https://www.gptoday.net/nl/nieuws/f1/296026/weerbericht-gp-monaco-verstappen-gaat-mogelijk-regenachtige-kwalificatie-tegemoet" target="_blank" rel="noopener" data-cat="f1">
-      <div>
-        <div class="card-meta">
-          <span class="cat-tag cat-f1">F1</span>
-          <span class="card-source">GPToday.net</span>
-          <span class="card-date">3 juni 2026</span>
-        </div>
-        <div class="card-title">Weerbericht GP Monaco: mogelijk regenachtige kwalificatie in het verschiet</div>
-        <div class="card-summary">Hoewel het raceweekend in Monaco overwegend droog en zonnig belooft te worden, kan de kwalificatie op zaterdag verrast worden door regen. Dat kan de onderlinge krachtsverhoudingen flink door elkaar schudden op het smalle stratencircuit van Monte Carlo.</div>
-      </div>
-      <div class="card-arrow">↗</div>
-    </a>
-
-    <a class="news-card cat-f1-card" href="https://www.motorsport.com/f1/news/max-verstappen-jokes-about-red-bull-in-monaco-im-going-to-order-a-new-back/10825961/" target="_blank" rel="noopener" data-cat="f1">
-      <div>
-        <div class="card-meta">
-          <span class="cat-tag cat-f1">F1</span>
-          <span class="card-source">Motorsport.com</span>
-          <span class="card-date">31 mei 2026</span>
-        </div>
-        <div class="card-title">Verstappen maakt grappen over 'nieuwe achterkant' te midden van RB22-rijproblemen</div>
-        <div class="card-summary">Max Verstappen heeft humoristisch gereageerd op de voortdurende rijkwaliteitsproblemen van de RB22. 'Ik ga een nieuwe achterkant bestellen', grapte de Nederlander. De setup-filosofie van Red Bull botst nog steeds met wat Verstappen ideaal vindt voor hobbelige circuits zoals Monaco.</div>
-      </div>
-      <div class="card-arrow">↗</div>
-    </a>
-
-    <a class="news-card cat-f1-card" href="https://racingnews365.nl/max-verstappen-verliest-laatste-strafpunten" target="_blank" rel="noopener" data-cat="f1">
-      <div>
-        <div class="card-meta">
-          <span class="cat-tag cat-f1">F1</span>
-          <span class="card-source">RacingNews365</span>
-          <span class="card-date">1 juni 2026</span>
-        </div>
-        <div class="card-title">Verstappen begint Monaco met schone lei: laatste strafpunten verlopen</div>
-        <div class="card-summary">Op 1 juni 2026 zijn de laatste drie strafpunten van Max Verstappens superlicentie verlopen. De punten stamden nog uit het incident met George Russell tijdens de Spaanse GP van 2025. Verstappen treedt Monaco aan zonder enige dreiging van een schorsing.</div>
-      </div>
-      <div class="card-arrow">↗</div>
-    </a>
-
-    <a class="news-card cat-f1-card" href="https://www.planetf1.com/news/red-bull-turnaround-mekies-upgrade-progress" target="_blank" rel="noopener" data-cat="f1">
-      <div>
-        <div class="card-meta">
-          <span class="cat-tag cat-f1">F1</span>
-          <span class="card-source">PlanetF1</span>
-          <span class="card-date">1 juni 2026</span>
-        </div>
-        <div class="card-title">Red Bull-baas Mekies bevestigt RB22-progressie: 'Niets dat niet oplosbaar is'</div>
-        <div class="card-summary">Red Bull-teambaas Laurent Mekies heeft bevestigd dat het team significante stappen heeft gezet in de ontwikkeling van de RB22. Na de upgrades in Miami en Montreal staat Verstappen beduidend dichter bij de top, maar het team erkent dat er nog werk aan de winkel is voor Monaco.</div>
-      </div>
-      <div class="card-arrow">↗</div>
-    </a>
-
-    <a class="news-card cat-f1-card" href="https://racing.nl/formule-1/max-verstappen-krijgt-plotseling-goed-nieuws-in-titelstrijd/" target="_blank" rel="noopener" data-cat="f1">
-      <div>
-        <div class="card-meta">
-          <span class="cat-tag cat-f1">F1</span>
-          <span class="card-source">Racing.nl</span>
-          <span class="card-date">2 juni 2026</span>
-        </div>
-        <div class="card-title">Antonelli leidt WK met 131 punten, Verstappen vecht terug vanuit zevende plek</div>
-        <div class="card-summary">Andrea Kimi Antonelli staat met 131 punten aan de leiding van het 2026-wereldkampioenschap. Verstappen staat zevende met 43 punten na een moeizaam seizoensbegin. Zijn eerste podium in Canada gaf hem nieuw vertrouwen richting de Europese seizoenshelft.</div>
-      </div>
-      <div class="card-arrow">↗</div>
-    </a>
-
-    <a class="news-card cat-gt-card" href="https://racingnews365.nl/verstappen-racing-ontsnapt-tijdens-massale-startcrash-op-monza" target="_blank" rel="noopener" data-cat="gt">
-      <div>
-        <div class="card-meta">
-          <span class="cat-tag cat-gt">GT</span>
-          <span class="card-source">RacingNews365</span>
-          <span class="card-date">29 mei 2026</span>
-        </div>
-        <div class="card-title">Verstappen Racing 'ontsnapt' tijdens massale startcrash op Monza</div>
-        <div class="card-summary">Het GT-team van Max Verstappen had een zenuwslopend begin van de race op Monza na een massale startcrash in de eerste bocht. Het team wist zich er echter doorheen te manoeuvreren zonder grote schade, wat een klein wonder was in de chaos van de openingsfase.</div>
-      </div>
-      <div class="card-arrow">↗</div>
-    </a>
-
-    <a class="news-card cat-alg-card" href="https://www.gpblog.com/nl/nieuws/verstappen-brengt-speciaal-oranje-wk-shirt-uit-met-eigen-rugnummer" target="_blank" rel="noopener" data-cat="alg">
-      <div>
-        <div class="card-meta">
-          <span class="cat-tag cat-alg">Algemeen</span>
-          <span class="card-source">GPblog.com</span>
-          <span class="card-date">2 juni 2026</span>
-        </div>
-        <div class="card-title">Verstappen lanceert speciaal WK voetbal-shirt in aanloop naar toernooi 2026</div>
-        <div class="card-summary">Max Verstappen heeft een opvallende nieuwe merchandise-lijn uitgebracht geïnspireerd op klassieke voetbalshirts, ter ere van het WK voetbal 2026. Het oranje shirt, met Verstappens eigen rugnummer, is exclusief te koop via zijn officiële webshop.</div>
-      </div>
-      <div class="card-arrow">↗</div>
-    </a>
-
+  <div class="news-list"><a class="news-card cat-f1-card" href="https://www.formule1.nl/nieuws/lewis-hamilton-vermogen-ferrari-gp-monaco-mercedes-leuk-worden-sf-26/" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Formule1.nl</span>
+    </div>
+    <div class="card-title">Lewis Hamilton benadrukt gebrek aan vermogen: &#8216;Maar GP Monaco wordt leuk&#8217;</div>
+    <div class="card-summary">Lewis Hamilton kijkt met vertrouwen vooruit naar de GP van Monaco, al plaatst hij daar wel een duidelijke kanttekening bij. De zevenvoudi…</div>
   </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.formule1.nl/nieuws/andrea-stella-schaart-achter-lando-norris-ferrari-favoriet-gp-monaco-mclaren/" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Formule1.nl</span>
+    </div>
+    <div class="card-title">Andrea Stella schaart zich achter Lando Norris: &#8216;Ferrari de favoriet in Monaco&#8217;</div>
+    <div class="card-summary">McLaren-teambaas Andrea Stella denkt dat Ferrari de beste papieren heeft voor de zege tijdens de GP van Monaco. Eerder gaf ook Lando Norr…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.formule1.nl/nieuws/motor-topman-red-bull-ben-hodgkinson-max-verstappen-powertrains-eerste-zege/" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Formule1.nl</span>
+    </div>
+    <div class="card-title">Motorenbaas Red Bull trots op vooruitgang: &#8216;Mikken op eerste overwinning&#8217;</div>
+    <div class="card-summary">Max Verstappen eindigde tijdens de voorbije GP van Canada voor het eerst op het podium in 2026. Hij werd daarbij enigszins geholpen door …</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.formule1.nl/nieuws/tijdschema-gp-monaco-f1-zo-laat-beginnen-wanneer-hoe-laat-tijden-datum/" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Formule1.nl</span>
+    </div>
+    <div class="card-title">Tijdschema GP Monaco: Zo laat beginnen de sessies</div>
+    <div class="card-summary">Na het sprintweekend in Montreal reist het F1-circus af naar Monaco voor misschien wel de meest iconische race van het jaar. Niet voor ni…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.formule1.nl/nieuws/jolyon-palmer-verwacht-lastig-weekend-voor-red-bull-ik-zou-mijn-geld-op-charles-leclerc-zetten/" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Formule1.nl</span>
+    </div>
+    <div class="card-title">Jolyon Palmer verwacht lastig weekend voor Red Bull: ‘Geld op Charles Leclerc zetten’</div>
+    <div class="card-summary">Jolyon Palmer verwacht dat Red Bull een lastig weekend tegemoet gaat in Monaco. Hoewel de voormalig Formule 1-coureur tijdens het racewee…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.formule1.nl/nieuws/aston-martin-komt-met-speciale-oranje-bolide-naar-monaco/" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Formule1.nl</span>
+    </div>
+    <div class="card-title">Aston Martin pakt uit in Monaco met opvallende oranje livery</div>
+    <div class="card-summary">Aston Martin heeft voor de Grand Prix van Monaco een speciale livery samen met hun hoofdsponsor Maaden – een Saudisch staatsmijnbouwbedri…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.formule1.nl/nieuws/gp-monaco-herinneringen-aan-een-feest-van-een-van-de-rijkste-en-impopulairste-teambazen-ooit/" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Formule1.nl</span>
+    </div>
+    <div class="card-title">GP Monaco: Herinneringen aan feest van één van de rijkste en impopulairste teambazen ooit</div>
+    <div class="card-summary">Ook in tijden van economische tegenslag wordt in Monaco geen armoe geleden. Maar in 2006, als het geld nog tegen de kaden van het prinsdo…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.formule1.nl/nieuws/max-verstappen-red-bull-gp-monaco-behoedzaam-hard-werken-team/" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Formule1.nl</span>
+    </div>
+    <div class="card-title">Max Verstappen behoedzaam richting GP Monaco: &#8216;Blijven hard werken als team&#8217;</div>
+    <div class="card-summary">Max Verstappen staat dit weekend aan de start van de GP van Monaco. Tijdens het vorige raceweekend in Canada eindigde de Nederlander voor…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.motorsport.com/f1/news/Ten-things-you-should-know-about-the-F1-Monaco-GP/10826435/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=www" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Motorsport.com</span>
+    </div>
+    <div class="card-title">De 10 dingen die je moet weten over de F1 Grand Prix van Monaco</div>
+    <div class="card-summary">Vergeet de glitter en glamour van Las Vegas, Abu Dhabi, Singapore of Miami. De Formule 1 is terug in Europa voor wat velen beschouwen als…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.motorsport.com/f1/news/five-things-to-look-out-for-at-the-f1-monaco-gp/10826298/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=www" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Motorsport.com</span>
+    </div>
+    <div class="card-title">Vijf dingen om op te letten tijdens de F1 GP van Monaco</div>
+    <div class="card-summary">De Formule 1 begint de Europese etappe van het seizoen 2026 met de Grand Prix van Monaco dit weekend, de zesde ronde van het seizoen. Het…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.motorsport.com/f1/news/Aston-Martin-reveals-Monaco-GP-livery/10826403/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=www" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Motorsport.com</span>
+    </div>
+    <div class="card-title">Aston Martin onthult speciale kleurveranderende Monaco GP-kleurstelling</div>
+    <div class="card-summary">Het Grand Prix-weekend van Monaco is altijd het meest glamoureuze evenement op de Formule 1-kalender geweest. Het is geen toeval dat team…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.motorsport.com/f1/news/charles-leclerc-reiterates-ferrari-f1-title-desire-as-he-extends-contract/10826370/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=www" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Motorsport.com</span>
+    </div>
+    <div class="card-title">Charles Leclerc herhaalt de wens van Ferrari F1-titel terwijl hij zijn contract verlengt</div>
+    <div class="card-summary">Charles Leclerc heeft ingestemd met een contractverlenging om bij Ferrari te blijven, waardoor hij zichzelf in de nabije toekomst van de …</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.motorsport.com/f1/news/norris-ferrari-will-be-on-pole-for-f1-monaco-gp/10826021/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=www" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Motorsport.com</span>
+    </div>
+    <div class="card-title">Lando Norris: Ferrari staat op pole voor de F1 GP van Monaco</div>
+    <div class="card-summary">Lando Norris en McLaren kozen Ferrari als favoriet tijdens de Formule 1 Grand Prix van Monaco dit weekend vanwege de kracht van de Scuder…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.motorsport.com/f1/news/mclaren-celebrates-1000th-f1-gp-in-monaco-with-special-livery/10826078/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=www" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Motorsport.com</span>
+    </div>
+    <div class="card-title">McLaren viert 1000e F1 GP in Monaco met speciale kleurstelling</div>
+    <div class="card-summary">Het McLaren Formule 1-team heeft een speciale kleurstelling onthuld voor de komende Grand Prix van Monaco en Barcelona om de 1000e Grand …</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.motorsport.com/f1/news/ferrari-unveils-special-charles-leclerc-monaco-gp-race-suit/10826056/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=www" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Motorsport.com</span>
+    </div>
+    <div class="card-title">Ferrari onthult speciaal Charles Leclerc Monaco GP-racepak</div>
+    <div class="card-summary">Ferrari heeft het speciale racepak van Charles Leclerc onthuld voor zijn thuisrace tijdens de Grand Prix van Monaco. Afdwalen van het geb…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.motorsport.com/f1/news/ayao-komatsu-monaco-sunday-accepted-haas-boss-unique-appeal/10826049/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=www" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Motorsport.com</span>
+    </div>
+    <div class="card-title">Ayao Komatsu zegt dat de zondag van Monaco geaccepteerd moet worden, omdat Haas-baas zijn "unieke" aantrekkingskracht benadrukt</div>
+    <div class="card-summary">Haas Formule 1-teambaas Ayao Komatsu gelooft dat de 2026-reglementaire auto's niets zullen veranderen aan de uitdagingen waarmee coureurs…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.autosport.com/f1/news/charles-leclerc-reiterates-ferrari-f1-title-desire-as-he-extends-contract/10826378/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=uk" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Autosport</span>
+    </div>
+    <div class="card-title">Leclerc verlengt het Ferrari F1-contract met een meerjarige deal</div>
+    <div class="card-summary">Charles Leclerc heeft ingestemd met een contractverlenging om bij Ferrari te blijven, waardoor hij zichzelf in de nabije toekomst van de …</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.autosport.com/f1/news/how-the-fia-is-limiting-f1-cars-top-speed-with-new-engine-maps-at-monaco-gp/10825365/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=uk" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Autosport</span>
+    </div>
+    <div class="card-title">Hoe de FIA ​​de topsnelheid van F1-auto’s tijdens de GP van Monaco beperkt met nieuwe motorkaarten</div>
+    <div class="card-summary">Monaco, het juweel op de kroon van de Formule 1-kalender, heeft de afgelopen eeuw een uitdaging vertegenwoordigd – een uitdaging die dit …</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.autosport.com/f1/news/fia-scraps-f1-straight-line-mode-in-monaco-gp-heres-what-that-means-for-the-pecking-order/10825074/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=uk" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Autosport</span>
+    </div>
+    <div class="card-title">FIA schrapt de F1-racemodus in de GP van Monaco – dit betekent wat dat betekent voor de pikorde</div>
+    <div class="card-summary">Het nieuws is officieel: actieve aerodynamica zal niet worden gebruikt tijdens de Grand Prix van Monaco. De FIA ​​heeft de beslissing gen…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.autosport.com/f1/news/why-mclaren-will-try-rejected-front-wing-again-in-monaco/10824772/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=uk" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Autosport</span>
+    </div>
+    <div class="card-title">Waarom McLaren in Monaco opnieuw een afgekeurde voorvleugel gaat proberen</div>
+    <div class="card-summary">Tijdens de Canadese Grand Prix van Formule 1 introduceerde McLaren de tweede fase van een groot updatepakket voor zijn MCL40-auto, met ee…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+</div>
 </div>
 
-<div class="footer">MAX VERSTAPPEN NIEUWS · AUTOMATISCH BIJGEWERKT · DAGELIJKS 23:00</div>
+<div class="footer">MAX VERSTAPPEN NIEUWS · AUTOMATISCH BIJGEWERKT · DAGELIJKS 08:00 &amp; 18:00</div>
 
 <script>
 (function(){
