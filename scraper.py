@@ -116,7 +116,7 @@ def parse_rss_regex(raw, bron, categorie, taal, race_termen):
             "taal": taal,
             "samenvatting_orig": desc_raw[:200],
         })
-        if len(items) >= 5:
+        if len(items) >= 8:
             break
     return items
 
@@ -168,12 +168,12 @@ def haal_nieuws(race):
             gezien.add(sleutel)
             uniek.append(item)
 
-    uniek = uniek[:12]  # Max 12 voor vertaling
+    uniek = uniek[:20]  # Max 20 voor vertaling
 
     print(f"\n  Vertalen ({sum(1 for i in uniek if i['taal']=='en')} Engelse items)…")
     uniek = vertaal_batch(uniek)
 
-    return uniek[:9]
+    return uniek
 
 # ─── HTML GENEREREN ───────────────────────────────────────────────────────
 def cat_label(cat):
@@ -227,7 +227,8 @@ def genereer_html(nieuws, race):
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>Max Verstappen Nieuws</title>
 <style>
   :root{{color-scheme:dark}}*{{box-sizing:border-box;margin:0;padding:0}}
@@ -282,13 +283,25 @@ def genereer_html(nieuws, race):
   .news-card:hover .card-arrow{{color:#e8002d}}
   .no-news{{text-align:center;padding:48px;color:rgba(255,255,255,.14);font-size:13px}}
   .footer{{text-align:center;padding:0 0 32px;font-size:10px;color:rgba(255,255,255,.09);letter-spacing:.5px}}
-  @media(max-width:600px){{
-    .header-photos{{height:160px}}
-    .header-title-bar{{padding:12px 16px}}
-    .header-title{{font-size:20px}}
-    .header-sub{{margin-left:0}}
-    .next-race-bar,.filter-bar{{padding:10px 16px}}
-    .news-section{{padding:18px 16px 32px}}
+  @media(max-width:700px){{
+    .header-photos{{height:140px}}
+    .header-title-bar{{padding:10px 14px;gap:8px}}
+    .header-title{{font-size:18px}}
+    .header-eyebrow{{font-size:8px;letter-spacing:2px}}
+    .header-sub{{margin-left:0;width:100%}}
+    .next-race-bar{{padding:8px 14px;flex-wrap:wrap;gap:8px}}
+    .nr-countdown{{margin-left:0;width:100%;justify-content:flex-start}}
+    .filter-bar{{padding:8px 14px;gap:6px}}
+    .filter-btn{{padding:5px 12px;font-size:10px}}
+    .news-section{{padding:14px 12px 28px}}
+    .news-card{{padding:12px 14px}}
+    .card-title{{font-size:13px}}
+    .card-summary{{font-size:11px;color:rgba(255,255,255,.3)}}
+    .card-arrow{{display:none}}
+  }}
+  @media(max-width:400px){{
+    .header-title{{font-size:16px}}
+    .nr-num{{font-size:14px}}
     .card-summary{{display:none}}
   }}
 </style>
@@ -303,7 +316,7 @@ def genereer_html(nieuws, race):
     <h1 class="header-title">Max <em>Verstappen</em> Nieuws</h1>
     <div class="header-sub">
       <div class="live-dot"></div>
-      <span>Bijgewerkt op {datum_nl} · Dagelijks om 18:00</span>
+      <span>Bijgewerkt op {datum_nl} · Dagelijks om 08:00 &amp; 18:00</span>
     </div>
   </div>
 </div>
@@ -332,7 +345,7 @@ def genereer_html(nieuws, race):
   <div class="news-list">{cards}</div>
 </div>
 
-<div class="footer">MAX VERSTAPPEN NIEUWS · AUTOMATISCH BIJGEWERKT · DAGELIJKS 18:00</div>
+<div class="footer">MAX VERSTAPPEN NIEUWS · AUTOMATISCH BIJGEWERKT · DAGELIJKS 08:00 &amp; 18:00</div>
 
 <script>
 (function(){{

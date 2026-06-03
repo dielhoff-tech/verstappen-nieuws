@@ -1,10 +1,15 @@
-name: Dagelijkse deploy – 18:00 Amsterdam
+name: Dagelijkse deploy – 08:00 en 18:00 Amsterdam
 
 on:
   schedule:
-    # 16:00 UTC = 18:00 Amsterdam (zomertijd CEST)
+    # 06:00 UTC = 08:00 Amsterdam (CEST)
+    - cron: '0 6 * * *'
+    # 16:00 UTC = 18:00 Amsterdam (CEST)
     - cron: '0 16 * * *'
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   deploy:
@@ -13,6 +18,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Python dependencies installeren
         run: pip install requests beautifulsoup4 lxml deep-translator
