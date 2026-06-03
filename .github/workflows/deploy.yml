@@ -28,7 +28,11 @@ jobs:
         run: python3 scraper.py
 
       - name: Commit en push
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "Dagelijkse update"
-          file_pattern: index.html
+        run: |
+          git config user.name  "Verstappen Deploy Bot"
+          git config user.email "deploy@verstappen-nieuws.local"
+          git add index.html
+          git diff --cached --quiet && echo "Geen wijzigingen" && exit 0
+          git commit -m "Dagelijkse update $(TZ='Europe/Amsterdam' date '+%Y-%m-%d %H:%M')"
+          git pull --rebase origin main
+          git push origin main
