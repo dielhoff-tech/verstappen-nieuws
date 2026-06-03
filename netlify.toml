@@ -1,6 +1,0 @@
-[build]
-  command   = "pip install requests deep-translator lxml && python3 scraper.py"
-  publish   = "."
-
-[build.environment]
-  PYTHON_VERSION = "3.11"
