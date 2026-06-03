@@ -34,6 +34,7 @@ jobs:
           git config user.name  "Verstappen Deploy Bot"
           git config user.email "deploy@verstappen-nieuws.local"
           cp index.html /tmp/index_nieuw.html
+          git checkout -- index.html
           git pull origin main --rebase
           cp /tmp/index_nieuw.html index.html
           git add index.html
