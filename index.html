@@ -2,7 +2,7 @@
 {
   "name": "Verstappen Nieuws",
   "schemaVersion": 1,
-  "description": "Dagelijks Nederlandstalig nieuwsoverzicht over Max Verstappen (F1 & GT), automatisch bijgewerkt via AI.",
+  "description": "Dagelijks Nederlandstalig nieuwsoverzicht over Max Verstappen (F1, GT, Simracing), automatisch bijgewerkt.",
   "mcpTools": [],
   "mcpServerNames": []
 }
@@ -10,284 +10,395 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>Max Verstappen Nieuws</title>
 <style>
-  :root { color-scheme: dark; }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #07091a; color: #f0f0f0; min-height: 100vh; overflow-x: hidden; }
-
-  /* HEADER */
-  .header { position: relative; width: 100%; background: #07091a; }
-  .header-photos { display: grid; grid-template-columns: repeat(4, 1fr); height: 260px; gap: 3px; }
-  .header-photos img { width: 100%; height: 100%; object-fit: cover; display: block; filter: brightness(0.82) saturate(1.1); transition: filter 0.25s, transform 0.3s; }
-  .header-photos img:hover { filter: brightness(1) saturate(1.2); transform: scale(1.02); z-index: 2; position: relative; }
-  .header-track { height: 3px; background: linear-gradient(90deg, transparent 0%, #e8002d 15%, #ffd700 50%, #e8002d 85%, transparent 100%); box-shadow: 0 0 14px rgba(232,0,45,0.5); }
-  .header-title-bar { padding: 18px 28px 16px; display: flex; align-items: baseline; gap: 14px; background: #07091a; }
-  .header-eyebrow { font-size: 9px; font-weight: 800; letter-spacing: 3.5px; text-transform: uppercase; color: #e8002d; flex-shrink: 0; }
-  .header-title { font-size: 28px; font-weight: 900; color: #fff; line-height: 1; letter-spacing: -0.5px; }
-  .header-title em { font-style: normal; color: #ffd700; }
-  .header-sub { margin-left: auto; font-size: 11px; color: rgba(255,255,255,0.3); display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
-  .live-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 8px #22c55e; animation: blink 2s infinite; flex-shrink: 0; }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
-
-  /* RACE BAR */
-  .next-race-bar { background: linear-gradient(90deg, #0c1636 0%, #121e44 40%, #160a0a 100%); border-bottom: 1px solid rgba(255,255,255,0.06); padding: 10px 28px; display: flex; align-items: center; gap: 14px; overflow-x: auto; scrollbar-width: none; }
-  .next-race-bar::-webkit-scrollbar { display: none; }
-  .nr-label { font-size: 9px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: #e8002d; white-space: nowrap; flex-shrink: 0; }
-  .nr-divider { width: 1px; height: 24px; background: rgba(255,255,255,0.1); flex-shrink: 0; }
-  .nr-flag { font-size: 20px; flex-shrink: 0; }
-  .nr-info { flex-shrink: 0; }
-  .nr-race { font-size: 14px; font-weight: 800; color: #fff; white-space: nowrap; }
-  .nr-date { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 1px; }
-  .nr-countdown { margin-left: auto; display: flex; gap: 8px; flex-shrink: 0; }
-  .nr-unit { text-align: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 4px 10px; }
-  .nr-num { font-size: 18px; font-weight: 900; color: #ffd700; line-height: 1; font-variant-numeric: tabular-nums; }
-  .nr-lbl { font-size: 8px; color: rgba(255,255,255,0.28); letter-spacing: 1px; text-transform: uppercase; }
-
-  /* FILTER BAR */
-  .filter-bar { display: flex; gap: 8px; padding: 14px 28px; background: rgba(255,255,255,0.015); border-bottom: 1px solid rgba(255,255,255,0.05); overflow-x: auto; scrollbar-width: none; }
-  .filter-bar::-webkit-scrollbar { display: none; }
-  .filter-btn { flex-shrink: 0; padding: 5px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); background: transparent; color: rgba(255,255,255,0.38); font-size: 11px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: all 0.15s; text-transform: uppercase; }
-  .filter-btn:hover { border-color: rgba(232,0,45,0.4); color: rgba(255,255,255,0.75); }
-  .filter-btn.active { background: #e8002d; border-color: #e8002d; color: #fff; box-shadow: 0 0 14px rgba(232,0,45,0.3); }
-
-  /* NEWS CARDS */
-  .news-section { padding: 22px 28px 40px; max-width: 920px; margin: 0 auto; }
-  .section-label { font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: rgba(255,255,255,0.18); margin-bottom: 14px; }
-  .news-list { display: flex; flex-direction: column; gap: 10px; }
-  .news-card { background: rgba(255,255,255,0.032); border: 1px solid rgba(255,255,255,0.055); border-left: 3px solid transparent; border-radius: 10px; padding: 16px 18px; display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; transition: all 0.15s; text-decoration: none; color: inherit; }
-  .news-card:hover { background: rgba(255,255,255,0.058); transform: translateX(4px); }
-  .news-card.cat-f1-card  { border-left-color: #e8002d; }
-  .news-card.cat-f1-card:hover  { box-shadow: -2px 0 18px rgba(232,0,45,0.18); }
-  .news-card.cat-gt-card  { border-left-color: #3b82f6; }
-  .news-card.cat-gt-card:hover  { box-shadow: -2px 0 18px rgba(59,130,246,0.18); }
-  .news-card.cat-sim-card { border-left-color: #a855f7; }
-  .news-card.cat-sim-card:hover { box-shadow: -2px 0 18px rgba(168,85,247,0.18); }
-  .news-card.cat-alg-card { border-left-color: rgba(255,255,255,0.18); }
-  .card-meta { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; flex-wrap: wrap; }
-  .cat-tag { font-size: 9px; font-weight: 800; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 1px; }
-  .cat-f1  { background: rgba(232,0,45,0.16);  color: #ff7088; border: 1px solid rgba(232,0,45,0.22); }
-  .cat-gt  { background: rgba(59,130,246,0.16); color: #7dd3fc; border: 1px solid rgba(59,130,246,0.22); }
-  .cat-sim { background: rgba(168,85,247,0.16); color: #d8b4fe; border: 1px solid rgba(168,85,247,0.22); }
-  .cat-alg { background: rgba(255,255,255,0.06); color: #999; border: 1px solid rgba(255,255,255,0.1); }
-  .card-source { font-size: 11px; color: rgba(255,255,255,0.26); }
-  .card-date   { font-size: 11px; color: rgba(255,255,255,0.18); margin-left: auto; }
-  .card-title  { font-size: 14px; font-weight: 700; color: rgba(255,255,255,0.88); line-height: 1.35; margin-bottom: 5px; }
-  .card-summary{ font-size: 12px; color: rgba(255,255,255,0.36); line-height: 1.6; }
-  .card-arrow  { color: rgba(255,255,255,0.18); font-size: 18px; transition: color 0.15s; flex-shrink: 0; padding-left: 4px; }
-  .news-card:hover .card-arrow { color: #e8002d; }
-  .no-news { text-align: center; padding: 48px; color: rgba(255,255,255,0.14); font-size: 13px; }
-  .footer { text-align: center; padding: 0 0 32px; font-size: 10px; color: rgba(255,255,255,0.09); letter-spacing: 0.5px; }
-
-  @media (max-width: 600px) {
-    .header-photos { height: 160px; }
-    .header-title-bar { padding: 12px 16px; flex-wrap: wrap; gap: 8px; }
-    .header-title { font-size: 20px; }
-    .header-sub { margin-left: 0; }
-    .next-race-bar { padding: 10px 16px; }
-    .filter-bar { padding: 12px 16px; }
-    .news-section { padding: 18px 16px 32px; }
-    .card-summary { display: none; }
+  :root{color-scheme:dark}*{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#07091a;color:#f0f0f0;min-height:100vh;overflow-x:hidden}
+  .header{position:relative;width:100%;background:#07091a}
+  .header-photos{width:100%;height:260px;overflow:hidden}
+  .header-photos img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+  .header-track{height:3px;background:linear-gradient(90deg,transparent 0%,#e8002d 15%,#ffd700 50%,#e8002d 85%,transparent 100%);box-shadow:0 0 14px rgba(232,0,45,.5)}
+  .header-title-bar{padding:18px 28px 16px;display:flex;align-items:baseline;gap:14px;background:#07091a;flex-wrap:wrap}
+  .header-eyebrow{font-size:9px;font-weight:800;letter-spacing:3.5px;text-transform:uppercase;color:#e8002d;flex-shrink:0}
+  .header-title{font-size:28px;font-weight:900;color:#fff;line-height:1;letter-spacing:-.5px}
+  .header-title em{font-style:normal;color:#ffd700}
+  .header-sub{margin-left:auto;font-size:11px;color:rgba(255,255,255,.3);display:flex;align-items:center;gap:8px;flex-shrink:0}
+  .live-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;animation:blink 2s infinite;flex-shrink:0}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+  .race-blok{background:linear-gradient(135deg,#0c1636 0%,#121e44 50%,#0f0a1a 100%);border-bottom:1px solid rgba(255,255,255,.08);padding:16px 28px 20px}
+  .race-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+  .nr-label{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:#e8002d;white-space:nowrap;flex-shrink:0}
+  .nr-divider{width:1px;height:24px;background:rgba(255,255,255,.1);flex-shrink:0}
+  .nr-flag{font-size:24px;flex-shrink:0}
+  .nr-info{flex-shrink:0}
+  .nr-race{font-size:16px;font-weight:800;color:#fff;white-space:nowrap}
+  .nr-date{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px}
+  .nr-countdown{margin-left:auto;display:flex;gap:8px;flex-shrink:0}
+  .nr-unit{text-align:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:5px 12px}
+  .nr-num{font-size:22px;font-weight:900;color:#ffd700;line-height:1;font-variant-numeric:tabular-nums}
+  .nr-lbl{font-size:8px;color:rgba(255,255,255,.28);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+  .sessies{display:flex;gap:6px;flex-wrap:wrap}
+  .sessie-row{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);flex:1;min-width:140px}
+  .sessie-done{opacity:.35}
+  .sessie-upcoming .sessie-dot{color:#4ade80}
+  .sessie-race{border-color:rgba(232,0,45,.3);background:rgba(232,0,45,.07)}
+  .sessie-race .sessie-naam{color:#fff;font-weight:800}
+  .sessie-race .sessie-dot{color:#e8002d;font-size:14px}
+  .sessie-dot{font-size:11px;flex-shrink:0}
+  .sessie-naam{font-size:11px;font-weight:700;color:rgba(255,255,255,.7);flex:1}
+  .sessie-tijd{font-size:10px;color:rgba(255,255,255,.3);white-space:nowrap}
+  .filter-bar{display:flex;gap:8px;padding:14px 28px;background:rgba(255,255,255,.015);border-bottom:1px solid rgba(255,255,255,.05);overflow-x:auto;scrollbar-width:none}
+  .filter-bar::-webkit-scrollbar{display:none}
+  .filter-btn{flex-shrink:0;padding:5px 16px;border-radius:20px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.38);font-size:11px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:all .15s;text-transform:uppercase}
+  .filter-btn:hover{border-color:rgba(232,0,45,.4);color:rgba(255,255,255,.75)}
+  .filter-btn.active{background:#e8002d;border-color:#e8002d;color:#fff;box-shadow:0 0 14px rgba(232,0,45,.3)}
+  .news-section{padding:22px 28px 40px;max-width:920px;margin:0 auto}
+  .section-label{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.18);margin-bottom:14px}
+  .news-list{display:flex;flex-direction:column;gap:10px}
+  .news-card{background:rgba(255,255,255,.032);border:1px solid rgba(255,255,255,.055);border-left:3px solid transparent;border-radius:10px;padding:16px 18px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;transition:all .15s;text-decoration:none;color:inherit}
+  .news-card:hover{background:rgba(255,255,255,.058);transform:translateX(4px)}
+  .news-card.cat-f1-card{border-left-color:#e8002d}.news-card.cat-f1-card:hover{box-shadow:-2px 0 18px rgba(232,0,45,.18)}
+  .news-card.cat-gt-card{border-left-color:#3b82f6}.news-card.cat-gt-card:hover{box-shadow:-2px 0 18px rgba(59,130,246,.18)}
+  .news-card.cat-sim-card{border-left-color:#a855f7}.news-card.cat-sim-card:hover{box-shadow:-2px 0 18px rgba(168,85,247,.18)}
+  .news-card.cat-alg-card{border-left-color:rgba(255,255,255,.18)}
+  .card-meta{display:flex;align-items:center;gap:7px;margin-bottom:6px;flex-wrap:wrap}
+  .cat-tag{font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:1px}
+  .cat-f1{background:rgba(232,0,45,.16);color:#ff7088;border:1px solid rgba(232,0,45,.22)}
+  .cat-gt{background:rgba(59,130,246,.16);color:#7dd3fc;border:1px solid rgba(59,130,246,.22)}
+  .cat-sim{background:rgba(168,85,247,.16);color:#d8b4fe;border:1px solid rgba(168,85,247,.22)}
+  .cat-alg{background:rgba(255,255,255,.06);color:#999;border:1px solid rgba(255,255,255,.1)}
+  .card-source{font-size:11px;color:rgba(255,255,255,.26)}
+  .card-title{font-size:14px;font-weight:700;color:rgba(255,255,255,.88);line-height:1.35;margin-bottom:5px}
+  .card-summary{font-size:12px;color:rgba(255,255,255,.36);line-height:1.6}
+  .card-arrow{color:rgba(255,255,255,.18);font-size:18px;transition:color .15s;flex-shrink:0;padding-left:4px}
+  .news-card:hover .card-arrow{color:#e8002d}
+  .no-news{text-align:center;padding:48px;color:rgba(255,255,255,.14);font-size:13px}
+  .footer{text-align:center;padding:0 0 32px;font-size:10px;color:rgba(255,255,255,.09);letter-spacing:.5px}
+  @media(max-width:700px){
+    .header-photos{height:140px}
+    .header-title-bar{padding:10px 14px;gap:8px}
+    .header-title{font-size:18px}
+    .header-eyebrow{font-size:8px;letter-spacing:2px}
+    .header-sub{margin-left:0;width:100%}
+    .race-blok{padding:12px 14px 16px}
+    .race-top{gap:8px}
+    .nr-countdown{margin-left:0;width:100%;justify-content:flex-start}
+    .sessie-row{min-width:120px}
+    .sessie-naam{font-size:10px}
+    .filter-bar{padding:8px 14px;gap:6px}
+    .filter-btn{padding:5px 12px;font-size:10px}
+    .news-section{padding:14px 12px 28px}
+    .news-card{padding:12px 14px}
+    .card-title{font-size:13px}
+    .card-summary{font-size:11px;color:rgba(255,255,255,.3)}
+    .card-arrow{display:none}
+  }
+  @media(max-width:400px){
+    .header-title{font-size:16px}
+    .nr-num{font-size:14px}
+    .card-summary{display:none}
   }
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="header-photos">
-    <img src="img1.jpeg" alt="Max Verstappen">
-    <img src="img2.webp" alt="Max Verstappen">
-    <img src="img3.jpeg" alt="Max Verstappen GT">
-    <img src="img4.jpeg" alt="Max Verstappen auto">
-  </div>
+  <div class="header-photos"><img src="header.jpg" alt="Max Verstappen"></div>
   <div class="header-track"></div>
   <div class="header-title-bar">
     <div class="header-eyebrow">Verstappen Racing Universe</div>
     <h1 class="header-title">Max <em>Verstappen</em> Nieuws</h1>
     <div class="header-sub">
       <div class="live-dot"></div>
-      <span id="updateLabel">Bijgewerkt op donderdag 18 juni 2026 · Dagelijks om 23:00</span>
+      <span>Bijgewerkt op vrijdag 19 juni 2026 · Dagelijks om 08:00 &amp; 18:00</span>
     </div>
   </div>
 </div>
 
-<div class="next-race-bar">
-  <div class="nr-label">Volgende Race</div>
-  <div class="nr-divider"></div>
-  <div class="nr-flag">&#x1F1E6;&#x1F1F9;</div>
-  <div class="nr-info">
-    <div class="nr-race">Grand Prix van Oostenrijk</div>
-    <div class="nr-date">Red Bull Ring, Spielberg &middot; zondag 28 juni 2026 &middot; 15:00 CEST</div>
+<div class="race-blok">
+  <div class="race-top">
+    <div class="nr-label">Volgende Race</div>
+    <div class="nr-divider"></div>
+    <div class="nr-flag">🇪🇸</div>
+    <div class="nr-info">
+      <div class="nr-race">Grand Prix van Spanje</div>
+      <div class="nr-date">Circuit de Barcelona-Catalunya · zondag 21 juni 2026 · 15:00 Amsterdam tijd</div>
+    </div>
+    <div class="nr-countdown" id="countdown"></div>
   </div>
-  <div class="nr-countdown" id="countdown"></div>
+  <div class="sessies"><div class="sessie-row sessie-upcoming">
+  <span class="sessie-dot">◉</span>
+  <span class="sessie-naam">Vrije Training 1</span>
+  <span class="sessie-tijd">vr 19/6 · 13:30</span>
+</div>
+<div class="sessie-row sessie-upcoming">
+  <span class="sessie-dot">◉</span>
+  <span class="sessie-naam">Vrije Training 2</span>
+  <span class="sessie-tijd">vr 19/6 · 17:00</span>
+</div>
+<div class="sessie-row sessie-upcoming">
+  <span class="sessie-dot">◉</span>
+  <span class="sessie-naam">Vrije Training 3</span>
+  <span class="sessie-tijd">za 20/6 · 12:30</span>
+</div>
+<div class="sessie-row sessie-upcoming">
+  <span class="sessie-dot">◉</span>
+  <span class="sessie-naam">Kwalificatie</span>
+  <span class="sessie-tijd">za 20/6 · 16:00</span>
+</div>
+<div class="sessie-row sessie-race">
+  <span class="sessie-dot">🏁</span>
+  <span class="sessie-naam">Race</span>
+  <span class="sessie-tijd">zo 21/6 · 15:00</span>
+</div>
+</div>
 </div>
 
 <div class="filter-bar">
-  <button class="filter-btn active" onclick="filter('alles',this)">&#x1F3C1; Alles</button>
-  <button class="filter-btn" onclick="filter('f1',this)">&#x1F534; Formule 1</button>
-  <button class="filter-btn" onclick="filter('gt',this)">&#x1F535; GT Racing</button>
-  <button class="filter-btn" onclick="filter('sim',this)">&#x1F7E3; Simracing</button>
-  <button class="filter-btn" onclick="filter('alg',this)">&#x2B1B; Algemeen</button>
+  <button class="filter-btn active" onclick="filter('alles',this)">🏁 Alles</button>
+  <button class="filter-btn" onclick="filter('f1',this)">🔴 Formule 1</button>
+  <button class="filter-btn" onclick="filter('gt',this)">🔵 GT Racing</button>
+  <button class="filter-btn" onclick="filter('sim',this)">🟣 Simracing</button>
+  <button class="filter-btn" onclick="filter('alg',this)">⬛ Algemeen</button>
 </div>
 
 <div class="news-section">
-  <div class="section-label">Nieuws van de afgelopen 7 dagen</div>
-  <div class="news-list" id="newsList">
-
-    <a class="news-card cat-f1-card" href="https://www.formule1.nl/nieuws/max-verstappen-speciale-helm-gp-oostenrijk-2026-oranje-terug-red-bull/" target="_blank" rel="noopener" data-cat="f1">
-      <div>
-        <div class="card-meta">
-          <span class="cat-tag cat-f1">F1</span>
-          <span class="card-source">Formule1.nl</span>
-          <span class="card-date">17 juni 2026</span>
-        </div>
-        <div class="card-title">Verstappen onthult speciale oranje helm voor GP Oostenrijk: "Terug in oranje"</div>
-        <div class="card-summary">De viervoudig wereldkampioen presenteerde een volledig oranje helm die hij draagt tijdens de komende races in Oostenrijk, Belgie en Hongarije. Op social media schreef hij simpelweg: "Back in orange."</div>
-      </div>
-      <div class="card-arrow">&#x2197;</div>
-    </a>
-
-    <a class="news-card cat-f1-card" href="https://www.gpblog.com/en/breaking-news/hope-for-verstappen-red-bull-confirms-crucial-upgrade-in-austria" target="_blank" rel="noopener" data-cat="f1">
-      <div>
-        <div class="card-meta">
-          <span class="cat-tag cat-f1">F1</span>
-          <span class="card-source">GPblog</span>
-          <span class="card-date">17 juni 2026</span>
-        </div>
-        <div class="card-title">Red Bull bevestigt cruciale upgrade voor Oostenrijk — gewichtsreductie goed voor twee tienden</div>
-        <div class="card-summary">Teambaas Laurent Mekies kondigde aan dat de RB22 in Spielberg een grote update krijgt. Meerdere bronnen bevestigen dat de gewichtsreductie circa twee tienden seconde per ronde oplevert — hoop voor Verstappen.</div>
-      </div>
-      <div class="card-arrow">&#x2197;</div>
-    </a>
-
-    <a class="news-card cat-f1-card" href="https://www.gpfans.com/nl/f1-nieuws/1085992/red-bull-heeft-goed-nieuws-voor-verstappen-hebben-stappen-gezet/" target="_blank" rel="noopener" data-cat="f1">
-      <div>
-        <div class="card-meta">
-          <span class="cat-tag cat-f1">F1</span>
-          <span class="card-source">GPFans</span>
-          <span class="card-date">16 juni 2026</span>
-        </div>
-        <div class="card-title">Red Bull ziet lichtpuntjes na Barcelona: "Hebben stappen gezet"</div>
-        <div class="card-summary">Na de vierde en zesde plek voor Verstappen en Hadjar in Barcelona benadrukt teambaas Mekies dat Red Bull ten opzichte van het begin van het seizoen aanzienlijk is verbeterd. Verdere upgrades staan op de planning.</div>
-      </div>
-      <div class="card-arrow">&#x2197;</div>
-    </a>
-
-    <a class="news-card cat-f1-card" href="https://www.gptoday.net/nl/nieuws/f1/296384/uitslag-grand-prix-van-barcelona-emotionele-hamilton-wint-eindelijk-weer-na-drama-antonelli-verstappen-vierde" target="_blank" rel="noopener" data-cat="f1">
-      <div>
-        <div class="card-meta">
-          <span class="cat-tag cat-f1">F1</span>
-          <span class="card-source">GPToday</span>
-          <span class="card-date">15 juni 2026</span>
-        </div>
-        <div class="card-title">Hamilton wint emotioneel voor Ferrari in Barcelona — Verstappen pakt P4 na uitval Antonelli</div>
-        <div class="card-summary">Lewis Hamilton pakte zijn eerste overwinning voor Ferrari op emotionele wijze na een drama voor kampioenschapsleider Antonelli. Verstappen startte vijfde en redde dankzij de uitval van de Italiaan nog een vierde positie.</div>
-      </div>
-      <div class="card-arrow">&#x2197;</div>
-    </a>
-
-    <a class="news-card cat-f1-card" href="https://nl.motorsport.com/f1/news/max-verstappen-p4-f1-barcelona-op-alle-vlakken-net-tekort/10830326/" target="_blank" rel="noopener" data-cat="f1">
-      <div>
-        <div class="card-meta">
-          <span class="cat-tag cat-f1">F1</span>
-          <span class="card-source">Motorsport.com</span>
-          <span class="card-date">15 juni 2026</span>
-        </div>
-        <div class="card-title">Verstappen na P4 in Barcelona: "Op alle vlakken net tekort — Red Bull is vierde kracht op de grid"</div>
-        <div class="card-summary">De viervoudig kampioen gaf eerlijk toe dat zijn team achterloopt op Ferrari, Mercedes en McLaren. Verstappen staat momenteel zevende in het WK met 55 punten, 101 punten achter leider Antonelli.</div>
-      </div>
-      <div class="card-arrow">&#x2197;</div>
-    </a>
-
-    <a class="news-card cat-gt-card" href="https://www.gpblog.com/en/breaking-news/nurburgring-24h-full-results-verstappens-race-ends-in-late-heartbreak-with-painful-dnf" target="_blank" rel="noopener" data-cat="gt">
-      <div>
-        <div class="card-meta">
-          <span class="cat-tag cat-gt">GT</span>
-          <span class="card-source">GPblog</span>
-          <span class="card-date">12 juni 2026</span>
-        </div>
-        <div class="card-title">Drama bij 24u Nurburgring: Verstappen Racing valt uit door aandrijfasprobleem — DNF met vier uur te gaan</div>
-        <div class="card-summary">Verstappen Racing lag op koers voor een topresultaat op de Nordschleife, maar een technisch defect aan de achteras maakte een einde aan de droom. Verstappen reed spectaculaire nachtstints en had een spectaculair duel met de latere winnaar Maro Engel.</div>
-      </div>
-      <div class="card-arrow">&#x2197;</div>
-    </a>
-
-    <a class="news-card cat-gt-card" href="https://www.gpfans.com/nl/f1-nieuws/1086137/schouten-over-razendsnelle-verstappen-in-gt3-dat-had-ik-niet-verwacht/" target="_blank" rel="noopener" data-cat="gt">
-      <div>
-        <div class="card-meta">
-          <span class="cat-tag cat-gt">GT</span>
-          <span class="card-source">GPFans</span>
-          <span class="card-date">13 juni 2026</span>
-        </div>
-        <div class="card-title">Medecoureur Schouten verbaast over GT3-tempo Verstappen: "Had dit echt niet verwacht"</div>
-        <div class="card-summary">Daan Schouten, die naast Verstappen racete in de NLS op de Nordschleife, was onder de indruk van de bliksemsnelle aanpassing aan de GT3-auto. Zijn simracingachtergrond bleek een enorm voordeel op het Nurburgring-circuit.</div>
-      </div>
-      <div class="card-arrow">&#x2197;</div>
-    </a>
-
-    <a class="news-card cat-gt-card" href="https://racingnews365.nl/verstappen-geeft-duidelijkheid-over-toekomstige-nordschleife-avonturen" target="_blank" rel="noopener" data-cat="gt">
-      <div>
-        <div class="card-meta">
-          <span class="cat-tag cat-gt">GT</span>
-          <span class="card-source">RacingNews365</span>
-          <span class="card-date">14 juni 2026</span>
-        </div>
-        <div class="card-title">Verstappen sluit verdere Nordschleife-races in 2026 uit vanwege druk F1-schema</div>
-        <div class="card-summary">Na zijn GT3-debuut op de Nordschleife bevestigde Verstappen dat hij geen verdere races op het Nurburgring-circuit plant in 2026. Het volle F1-seizoen laat geen ruimte voor meer avonturen op de Groene Hel dit jaar.</div>
-      </div>
-      <div class="card-arrow">&#x2197;</div>
-    </a>
-
-    <a class="news-card cat-alg-card" href="https://www.gpfans.com/nl/f1-nieuws/1086095/alonso-ziet-verstappen-pech-hebben-met-materiaal-beste-coureur-zo-laag-in-wk-stand/" target="_blank" rel="noopener" data-cat="alg">
-      <div>
-        <div class="card-meta">
-          <span class="cat-tag cat-alg">ALGEMEEN</span>
-          <span class="card-source">GPFans</span>
-          <span class="card-date">16 juni 2026</span>
-        </div>
-        <div class="card-title">Alonso noemt Verstappen beste coureur op de grid: "Pech met het materiaal — hij hoort niet zo laag te staan"</div>
-        <div class="card-summary">Fernando Alonso steunt zijn rivaal publiekelijk en stelt dat Verstappen met een betere auto comfortabel bovenaan het kampioenschap zou staan. De Spanjaard wijt de lage WK-positie (P7) volledig aan het tekortschietende Red Bull-materiaal.</div>
-      </div>
-      <div class="card-arrow">&#x2197;</div>
-    </a>
-
+  <div class="section-label">Actueel nieuws</div>
+  <div class="news-list"><a class="news-card cat-gt-card" href="https://www.formule1.nl/nieuws/lance-stroll-tom-coronel-lusteloos-f1-mist-stukje-motivatie-aston-martin/" target="_blank" rel="noopener" data-cat="gt">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-gt">GT</span>
+      <span class="card-source">Formule1.nl</span>
+    </div>
+    <div class="card-title">Lance Stroll oogt lusteloos in Formule 1: &#8216;Hij mist een stukje motivatie&#8217;</div>
+    <div class="card-summary">Lance Stroll maakte afgelopen april zijn debuut in de GT World Challenge Europe. In navolging van Max Verstappen wilde hij zijn geluk bep…</div>
   </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.formule1.nl/nieuws/lammers-neemt-deel-aan-red-bull-legends-parade-gp-oostenrijk/" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Formule1.nl</span>
+    </div>
+    <div class="card-title">Jan Lammers neemt deel aan Red Bull Legends Parade tijdens GP Oostenrijk</div>
+    <div class="card-summary">De GP Oostenrijk krijgt dit jaar een extra Nederlands tintje. Uiteraard is de Grand Prix op de Red Bull Ring de thuisrace voor het team v…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.formule1.nl/nieuws/manager-max-verstappen-raymond-vermeulen-blijven-red-bull-mits-winnen/" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Formule1.nl</span>
+    </div>
+    <div class="card-title">Manager Max Verstappen reageert op exit-geruchten: &#8216;Blijven bij Red Bull, mits we kunnen winnen&#8217;</div>
+    <div class="card-summary">De F1-toekomst van Max Verstappen blijft onderwerp van speculatie. De oud-kampioen staat nog tot en met 2028 onder contract bij Red Bull,…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.formule1.nl/nieuws/max-verstappen-en-isack-hadjar-nemen-hotelgasten-in-de-maling/" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Formule1.nl</span>
+    </div>
+    <div class="card-title">VIDEO: Max Verstappen en Isack Hadjar nemen hotelgasten in de maling</div>
+    <div class="card-summary">Max Verstappen en Isack Hadjar zijn dit seizoen voor het eerst teamgenoten bij Red Bull. Naast dat beide coureurs hierdoor ieder Grand Pr…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.formule1.nl/nieuws/villeneuve-verstappen-is-de-overgebleven-soldaat-bij-red-bull/" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Formule1.nl</span>
+    </div>
+    <div class="card-title">Villeneuve: ‘Max Verstappen is de laatst overgebleven soldaat bij Red Bull’</div>
+    <div class="card-summary">Oud-Formule 1-coureur Jacques Villeneuve neemt de huidige situatie bij Red Bull onder de loep. De afgelopen jaren nam het ene na het ande…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.formule1.nl/nieuws/carlos-sainz-williams-aan-het-werk-terug-naar-de-tekentafel-gp-barcelona/" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Formule1.nl</span>
+    </div>
+    <div class="card-title">Carlos Sainz zet Williams aan het werk na puntloos weekend: &#8216;Terug naar de tekentafel&#8217;</div>
+    <div class="card-summary">Carlos Sainz kijkt terug op een moeizame thuisrace in Barcelona. De Williams-coureur beleefde de afgelopen weken een sterke reeks met rac…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.formule1.nl/nieuws/jos-verstappen-kraakt-ralf-schumacher-verspreidt-valse-informatie-mercedes/" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Formule1.nl</span>
+    </div>
+    <div class="card-title">Jos Verstappen kraakt speculerende Ralf Schumacher af: &#8216;Je verspreidt valse informatie&#8217;</div>
+    <div class="card-summary">Jos Verstappen is duidelijk klaar met alle analisten die blijven speculeren over de F1-toekomst van zijn zoon Max. Sinds Red Bull de afge…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.formule1.nl/nieuws/max-verstappen-speciale-helm-gp-oostenrijk-2026-oranje-terug-red-bull/" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Formule1.nl</span>
+    </div>
+    <div class="card-title">Max Verstappen onthult speciale helm voor GP Oostenrijk: &#8216;Terug in oranje&#8217;</div>
+    <div class="card-summary">Max Verstappen heeft in aanloop naar de GP van Oostenrijk een nieuwe oranje helm onthuld. De viervoudig wereldkampioen kiest traditiegetr…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.motorsport.com/f1/news/liam-lawsons-red-bull-demotion-for-the-better-of-his-f1-career-says-naomi-schiff/10831244/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=www" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Motorsport.com</span>
+    </div>
+    <div class="card-title">Naomi Schiff beweert dat degradatie van Red Bull 'het beste' was voor de F1-carrière van Liam Lawson</div>
+    <div class="card-summary">Voormalig W Series-coureur en Sky Sports Formule 1-analist Naomi Schiff gelooft dat de degradatie van Liam Lawson bij Red Bull uiteindeli…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.motorsport.com/f1/news/our-first-impressions-of-the-madring-f1-newest-circuit/10830899/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=www" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Motorsport.com</span>
+    </div>
+    <div class="card-title">'Geen enkele bocht is zo leuk' - Hoe de F1 de waanzin in Madring bracht</div>
+    <div class="card-summary">Met een ambitieus plan dat belooft te voldoen aan de doelstellingen van de Formule 1 op het gebied van onderhoudende, toegankelijke en du…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.motorsport.com/f1/news/leonardo-fornaroli-set-for-haas-f1-test-at-jerez/10830809/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=www" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Motorsport.com</span>
+    </div>
+    <div class="card-title">Leonardo Fornaroli klaar voor Haas F1-test op Jerez</div>
+    <div class="card-summary">Formule 2-kampioen Leonardo Fornaroli is klaar voor een Haas Formule 1-test in Jerez als onderdeel van een tweedaags Testing of Previous …</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.motorsport.com/f1/news/serena-williams-celebrates-lewis-hamilton-after-milestone-ferrari-f1-win/10830689/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=www" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Motorsport.com</span>
+    </div>
+    <div class="card-title">Serena Williams viert Lewis Hamilton na mijlpaal Ferrari F1-overwinning</div>
+    <div class="card-summary">Tennislegende Serena Williams was een van de eerste sportfiguren buiten de Formule 1 die Lewis Hamilton feliciteerde na zijn indrukwekken…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.motorsport.com/f1/news/im-not-a-machine-isack-hadjar-blasts-red-bull-start-procedure/10830609/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=www" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Motorsport.com</span>
+    </div>
+    <div class="card-title">"Ik ben geen machine": Isack Hadjar vernietigt de Red Bull-startprocedure</div>
+    <div class="card-summary">De coureurs van Red Bull hebben sinds het begin van het Formule 1-seizoen moeite met hun start. Hoewel er af en toe sterke ontsnappingen …</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.autosport.com/f1/news/no-corner-quite-like-it-how-f1-put-the-mad-in-madring/10830958/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=uk" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Autosport</span>
+    </div>
+    <div class="card-title">Hoe de nieuwste locatie van de F1 voor het eerst twee uitersten probeert te combineren</div>
+    <div class="card-summary">Met een ambitieus plan dat belooft te voldoen aan de doelstellingen van de Formule 1 op het gebied van onderhoudende, toegankelijke en du…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.autosport.com/f1/news/fornaroli-set-for-haas-f1-test-at-jerez/10830812/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=uk" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Autosport</span>
+    </div>
+    <div class="card-title">Fornaroli klaar voor Haas F1-test op Jerez</div>
+    <div class="card-summary">Formule 2-kampioen Leonardo Fornaroli is klaar voor een Haas Formule 1-test in Jerez als onderdeel van een tweedaags Testing of Previous …</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.autosport.com/f1/news/you-helped-me-achieve-this-dream-lewis-hamiltons-emotional-message-on-first-ferrari-gp-win/10830280/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=uk" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Autosport</span>
+    </div>
+    <div class="card-title">"Je hebt me geholpen deze droom te verwezenlijken" - Hamilton's emotionele boodschap na de eerste Ferrari-overwinning</div>
+    <div class="card-summary">Lewis Hamilton bedankte Ferrari voor zijn hulp bij het verwezenlijken van een droom nadat hij zijn eerste Grand Prix-overwinning had beha…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.autosport.com/f1/news/max-verstappen-surprised-as-red-bull-halves-gap-to-mercedes-in-barcelona/10830064/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=uk" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Autosport</span>
+    </div>
+    <div class="card-title">Verstappen verrast terwijl Red Bull kloof met Mercedes halveert: "Ik begrijp het niet helemaal"</div>
+    <div class="card-summary">Red Bull heeft zondag de derde startrij afgesloten voor de Formule 1 Grand Prix van Barcelona. Max Verstappen leek na twee sectoren in aa…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.autosport.com/f1/news/f1-barcelona-gp-fp1-report/10829512/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=uk" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Autosport</span>
+    </div>
+    <div class="card-title">F1 GP Barcelona: Russell overtreft eerste training vanuit Piastri</div>
+    <div class="card-summary">Mercedes Formule 1-coureur George Russell heeft de eerste training tijdens de Grand Prix van Barcelona gewonnen, met McLaren's Oscar Pias…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+<a class="news-card cat-f1-card" href="https://www.autosport.com/f1/news/are-the-rule-changes-enough-to-keep-max-verstappen-in-f1-i-understand-the-politics-behind-it/10829369/?utm_source=RSS&amp;utm_medium=referral&amp;utm_campaign=RSS-F1&amp;utm_term=News&amp;utm_content=uk" target="_blank" rel="noopener" data-cat="f1">
+  <div>
+    <div class="card-meta">
+      <span class="cat-tag cat-f1">F1</span>
+      <span class="card-source">Autosport</span>
+    </div>
+    <div class="card-title">Zijn de regelwijzigingen voldoende om Verstappen in de F1 te houden?</div>
+    <div class="card-summary">Max Verstappen zei vorige maand in Montreal dat zijn toekomst in de Formule 1 grotendeels zou afhangen van mogelijke wijzigingen in de re…</div>
+  </div>
+  <div class="card-arrow">↗</div>
+</a>
+</div>
 </div>
 
-<div class="footer">MAX VERSTAPPEN NIEUWS &middot; AUTOMATISCH BIJGEWERKT &middot; DAGELIJKS 23:00</div>
+<div class="footer">MAX VERSTAPPEN NIEUWS · AUTOMATISCH BIJGEWERKT · DAGELIJKS 08:00 &amp; 18:00</div>
 
 <script>
-// Countdown naar volgende race
 (function(){
-  const raceDate = new Date('2026-06-28T15:00:00+02:00');
+  const d=new Date('2026-06-21T15:00:00+02:00');
   function tick(){
-    const diff = raceDate - new Date();
-    if(diff <= 0){ document.getElementById('countdown').innerHTML='<span style="color:#22c55e;font-weight:800;font-size:13px;">&#x1F3C1; RACE DAY!</span>'; return; }
-    const d=Math.floor(diff/86400000), h=Math.floor((diff%86400000)/3600000), m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
+    const diff=d-new Date();
+    if(diff<=0){document.getElementById('countdown').innerHTML='<span style="color:#22c55e;font-weight:800">🏁 RACE DAY!</span>';return}
+    const dd=Math.floor(diff/86400000),h=Math.floor(diff%86400000/3600000),m=Math.floor(diff%3600000/60000),s=Math.floor(diff%60000/1000);
     document.getElementById('countdown').innerHTML=
-      '<div class="nr-unit"><div class="nr-num">'+d+'</div><div class="nr-lbl">Dagen</div></div>'+
-      '<div class="nr-unit"><div class="nr-num">'+String(h).padStart(2,'0')+'</div><div class="nr-lbl">Uur</div></div>'+
-      '<div class="nr-unit"><div class="nr-num">'+String(m).padStart(2,'0')+'</div><div class="nr-lbl">Min</div></div>'+
-      '<div class="nr-unit"><div class="nr-num">'+String(s).padStart(2,'0')+'</div><div class="nr-lbl">Sec</div></div>';
+      `<div class="nr-unit"><div class="nr-num">${dd}</div><div class="nr-lbl">Dagen</div></div>`+
+      `<div class="nr-unit"><div class="nr-num">${String(h).padStart(2,'0')}</div><div class="nr-lbl">Uur</div></div>`+
+      `<div class="nr-unit"><div class="nr-num">${String(m).padStart(2,'0')}</div><div class="nr-lbl">Min</div></div>`+
+      `<div class="nr-unit"><div class="nr-num">${String(s).padStart(2,'0')}</div><div class="nr-lbl">Sec</div></div>`;
   }
-  tick(); setInterval(tick,1000);
+  tick();setInterval(tick,1000);
 })();
-
-// Datum label
-(function(){
-  const d=new Date(); const dagen=['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'];
-  const mnd=['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
-  document.getElementById('updateLabel').textContent='Bijgewerkt op '+dagen[d.getDay()]+' '+d.getDate()+' '+mnd[d.getMonth()]+' '+d.getFullYear()+' · Dagelijks om 23:00';
-})();
-
-// Filter functie
-function filter(cat, btn){
-  document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});
+function filter(cat,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  document.querySelectorAll('.news-card').forEach(function(c){
-    c.style.display = (cat==='alles'||c.dataset.cat===cat) ? '' : 'none';
-  });
+  document.querySelectorAll('.news-card').forEach(c=>{c.style.display=(cat==='alles'||c.dataset.cat===cat)?'':'none'});
 }
 </script>
 </body>
