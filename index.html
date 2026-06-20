@@ -1,164 +1,180 @@
-<!DOCTYPE html><script type="application/json" id="cowork-artifact-meta">
-{
-  "name": "Verstappen Nieuws",
-  "schemaVersion": 1,
-  "description": "Dagelijks Nederlandstalig nieuwsoverzicht over Max Verstappen (F1, GT, Simracing), automatisch bijgewerkt.",
-  "mcpTools": [],
-  "mcpServerNames": []
-}
-</script>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>Max Verstappen Nieuws</title>
 <style>
-  :root{color-scheme:dark}*{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#07091a;color:#f0f0f0;min-height:100vh;overflow-x:hidden}
-  .header{position:relative;width:100%;background:#07091a}
-  .header-photos{width:100%;height:260px;overflow:hidden}
-  .header-photos img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
-  .header-track{height:3px;background:linear-gradient(90deg,transparent 0%,#e8002d 15%,#ffd700 50%,#e8002d 85%,transparent 100%);box-shadow:0 0 14px rgba(232,0,45,.5)}
-  .header-title-bar{padding:18px 28px 16px;display:flex;align-items:baseline;gap:14px;background:#07091a;flex-wrap:wrap}
-  .header-eyebrow{font-size:9px;font-weight:800;letter-spacing:3.5px;text-transform:uppercase;color:#e8002d;flex-shrink:0}
-  .header-title{font-size:28px;font-weight:900;color:#fff;line-height:1;letter-spacing:-.5px}
-  .header-title em{font-style:normal;color:#ffd700}
-  .header-sub{margin-left:auto;font-size:11px;color:rgba(255,255,255,.3);display:flex;align-items:center;gap:8px;flex-shrink:0}
-  .live-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;animation:blink 2s infinite;flex-shrink:0}
-  @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-  .race-blok{background:linear-gradient(135deg,#0c1636 0%,#121e44 50%,#0f0a1a 100%);border-bottom:1px solid rgba(255,255,255,.08);padding:16px 28px 20px}
-  .race-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:14px}
-  .nr-label{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:#e8002d;white-space:nowrap;flex-shrink:0}
-  .nr-divider{width:1px;height:24px;background:rgba(255,255,255,.1);flex-shrink:0}
-  .nr-flag{font-size:24px;flex-shrink:0}
-  .nr-info{flex-shrink:0}
-  .nr-race{font-size:16px;font-weight:800;color:#fff;white-space:nowrap}
-  .nr-date{font-size:11px;color:rgba(255,255,255,.35);margin-top:2px}
-  .nr-countdown{margin-left:auto;display:flex;gap:8px;flex-shrink:0}
-  .nr-unit{text-align:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:5px 12px}
-  .nr-num{font-size:22px;font-weight:900;color:#ffd700;line-height:1;font-variant-numeric:tabular-nums}
-  .nr-lbl{font-size:8px;color:rgba(255,255,255,.28);letter-spacing:1px;text-transform:uppercase;margin-top:2px}
-  .sessies{display:flex;gap:6px;flex-wrap:wrap}
-  .sessie-row{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);flex:1;min-width:140px}
-  .sessie-done{opacity:.35}
-  .sessie-upcoming .sessie-dot{color:#4ade80}
-  .sessie-race{border-color:rgba(232,0,45,.3);background:rgba(232,0,45,.07)}
-  .sessie-race .sessie-naam{color:#fff;font-weight:800}
-  .sessie-race .sessie-dot{color:#e8002d;font-size:14px}
-  .sessie-dot{font-size:11px;flex-shrink:0}
-  .sessie-naam{font-size:11px;font-weight:700;color:rgba(255,255,255,.7);flex:1}
-  .sessie-tijd{font-size:10px;color:rgba(255,255,255,.3);white-space:nowrap}
-  .filter-bar{display:flex;gap:8px;padding:14px 28px;background:rgba(255,255,255,.015);border-bottom:1px solid rgba(255,255,255,.05);overflow-x:auto;scrollbar-width:none}
-  .filter-bar::-webkit-scrollbar{display:none}
-  .filter-btn{flex-shrink:0;padding:5px 16px;border-radius:20px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.38);font-size:11px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:all .15s;text-transform:uppercase}
-  .filter-btn:hover{border-color:rgba(232,0,45,.4);color:rgba(255,255,255,.75)}
-  .filter-btn.active{background:#e8002d;border-color:#e8002d;color:#fff;box-shadow:0 0 14px rgba(232,0,45,.3)}
-  .news-section{padding:22px 28px 40px;max-width:920px;margin:0 auto}
-  .section-label{font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.18);margin-bottom:14px}
-  .news-list{display:flex;flex-direction:column;gap:10px}
-  .news-card{background:rgba(255,255,255,.032);border:1px solid rgba(255,255,255,.055);border-left:3px solid transparent;border-radius:10px;padding:16px 18px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;transition:all .15s;text-decoration:none;color:inherit}
-  .news-card:hover{background:rgba(255,255,255,.058);transform:translateX(4px)}
-  .news-card.cat-f1-card{border-left-color:#e8002d}.news-card.cat-f1-card:hover{box-shadow:-2px 0 18px rgba(232,0,45,.18)}
-  .news-card.cat-gt-card{border-left-color:#3b82f6}.news-card.cat-gt-card:hover{box-shadow:-2px 0 18px rgba(59,130,246,.18)}
-  .news-card.cat-sim-card{border-left-color:#a855f7}.news-card.cat-sim-card:hover{box-shadow:-2px 0 18px rgba(168,85,247,.18)}
-  .news-card.cat-alg-card{border-left-color:rgba(255,255,255,.18)}
-  .card-meta{display:flex;align-items:center;gap:7px;margin-bottom:6px;flex-wrap:wrap}
-  .cat-tag{font-size:9px;font-weight:800;padding:2px 8px;border-radius:20px;text-transform:uppercase;letter-spacing:1px}
-  .cat-f1{background:rgba(232,0,45,.16);color:#ff7088;border:1px solid rgba(232,0,45,.22)}
-  .cat-gt{background:rgba(59,130,246,.16);color:#7dd3fc;border:1px solid rgba(59,130,246,.22)}
-  .cat-sim{background:rgba(168,85,247,.16);color:#d8b4fe;border:1px solid rgba(168,85,247,.22)}
-  .cat-alg{background:rgba(255,255,255,.06);color:#999;border:1px solid rgba(255,255,255,.1)}
-  .card-source{font-size:11px;color:rgba(255,255,255,.26)}
-  .card-title{font-size:14px;font-weight:700;color:rgba(255,255,255,.88);line-height:1.35;margin-bottom:5px}
-  .card-summary{font-size:12px;color:rgba(255,255,255,.36);line-height:1.6}
-  .card-arrow{color:rgba(255,255,255,.18);font-size:18px;transition:color .15s;flex-shrink:0;padding-left:4px}
-  .news-card:hover .card-arrow{color:#e8002d}
-  .no-news{text-align:center;padding:48px;color:rgba(255,255,255,.14);font-size:13px}
-  .footer{text-align:center;padding:0 0 32px;font-size:10px;color:rgba(255,255,255,.09);letter-spacing:.5px}
-  @media(max-width:700px){
-    .header-photos{height:140px}
-    .header-title-bar{padding:10px 14px;gap:8px}
-    .header-title{font-size:18px}
-    .header-eyebrow{font-size:8px;letter-spacing:2px}
-    .header-sub{margin-left:0;width:100%}
-    .race-blok{padding:12px 14px 16px}
-    .race-top{gap:8px}
-    .nr-countdown{margin-left:0;width:100%;justify-content:flex-start}
-    .sessie-row{min-width:120px}
-    .sessie-naam{font-size:10px}
-    .filter-bar{padding:8px 14px;gap:6px}
-    .filter-btn{padding:5px 12px;font-size:10px}
-    .news-section{padding:14px 12px 28px}
-    .news-card{padding:12px 14px}
-    .card-title{font-size:13px}
-    .card-summary{font-size:11px;color:rgba(255,255,255,.3)}
-    .card-arrow{display:none}
-  }
-  @media(max-width:400px){
-    .header-title{font-size:16px}
-    .nr-num{font-size:14px}
-    .card-summary{display:none}
-  }
+:root{color-scheme:dark}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#07091a;color:#f0f0f0;min-height:100vh;overflow-x:hidden}
+
+/* ── HEADER ── */
+.header{position:relative;width:100%}
+.header-img{width:100%;height:260px;overflow:hidden}
+.header-img img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block}
+.track-line{height:3px;background:linear-gradient(90deg,transparent,#e8002d 20%,#ffd700 50%,#e8002d 80%,transparent);box-shadow:0 0 16px rgba(232,0,45,.6)}
+.title-bar{padding:14px 28px 12px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.eyebrow{font-size:9px;font-weight:800;letter-spacing:3.5px;text-transform:uppercase;color:#e8002d}
+.site-title{font-size:26px;font-weight:900;color:#fff;letter-spacing:-.5px;line-height:1}
+.site-title em{font-style:normal;color:#ffd700}
+.update-badge{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:10px;color:rgba(255,255,255,.28)}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px #22c55e;animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* ── RACE BLOK ── */
+.race-blok{background:linear-gradient(160deg,#0d1840 0%,#111830 45%,#130818 100%);border-bottom:1px solid rgba(255,255,255,.07);padding:18px 28px 22px}
+.race-header{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.race-flag{font-size:32px;line-height:1;flex-shrink:0;margin-top:2px}
+.race-meta{flex:1;min-width:180px}
+.race-label{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:#e8002d;margin-bottom:4px}
+.race-naam{font-size:18px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:3px}
+.race-circuit{font-size:11px;color:rgba(255,255,255,.35)}
+.race-datum{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px}
+.countdown-blok{flex-shrink:0}
+.countdown-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:6px;text-align:right}
+.countdown-label.live{color:#22c55e}
+.countdown{display:flex;gap:6px}
+.cd-unit{text-align:center;background:rgba(0,0,0,.3);border:1px solid rgba(255,215,0,.15);border-radius:8px;padding:6px 10px;min-width:52px}
+.cd-num{font-size:24px;font-weight:900;color:#ffd700;line-height:1;font-variant-numeric:tabular-nums}
+.cd-lbl{font-size:8px;color:rgba(255,255,255,.3);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px}
+
+/* ── CIRCUIT INFO ── */
+.circuit-info{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px}
+.ci-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:8px;padding:8px 14px;flex:1;min-width:110px}
+.ci-val{font-size:13px;font-weight:800;color:#fff;line-height:1}
+.ci-key{font-size:9px;color:rgba(255,255,255,.3);letter-spacing:1px;text-transform:uppercase;margin-top:3px}
+
+/* ── SESSIE TIJDLIJN ── */
+.tijdlijn-label{font-size:9px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:8px}
+.tijdlijn{display:flex;gap:5px;flex-wrap:wrap}
+.s-row{display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03);flex:1;min-width:130px;transition:all .15s}
+.s-done{opacity:.28}
+.s-live{border-color:rgba(34,197,94,.4)!important;background:rgba(34,197,94,.08)!important;animation:liveglow 2s ease-in-out infinite}
+@keyframes liveglow{0%,100%{box-shadow:0 0 0 rgba(34,197,94,0)}50%{box-shadow:0 0 12px rgba(34,197,94,.25)}}
+.s-race{border-color:rgba(232,0,45,.3);background:rgba(232,0,45,.06)}
+.s-next{border-color:rgba(255,215,0,.15)}
+.s-check{color:#4ade80;font-size:11px;flex-shrink:0}
+.s-live-badge{font-size:8px;font-weight:900;letter-spacing:1.5px;color:#22c55e;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);border-radius:4px;padding:2px 5px;flex-shrink:0}
+.s-dot-race{font-size:11px;flex-shrink:0}
+.s-dot-next{color:#ffd700;font-size:10px;flex-shrink:0}
+.s-naam{font-size:11px;font-weight:700;color:rgba(255,255,255,.75);flex:1}
+.s-live .s-naam{color:#4ade80;font-weight:800}
+.s-race .s-naam{color:#fff;font-weight:800}
+.s-tijd{font-size:10px;color:rgba(255,255,255,.3);white-space:nowrap}
+.s-next .s-tijd{color:rgba(255,215,0,.5)}
+
+/* ── FILTER ── */
+.filter-bar{display:flex;gap:8px;padding:12px 28px;background:rgba(0,0,0,.2);border-bottom:1px solid rgba(255,255,255,.05);overflow-x:auto;scrollbar-width:none}
+.filter-bar::-webkit-scrollbar{display:none}
+.filter-btn{flex-shrink:0;padding:6px 16px;border-radius:20px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.38);font-size:11px;font-weight:700;letter-spacing:.5px;cursor:pointer;transition:all .15s;text-transform:uppercase}
+.filter-btn:hover{border-color:rgba(232,0,45,.5);color:rgba(255,255,255,.8)}
+.filter-btn.active{background:#e8002d;border-color:#e8002d;color:#fff;box-shadow:0 0 16px rgba(232,0,45,.35)}
+
+/* ── NIEUWS ── */
+.news-section{padding:20px 28px 48px;max-width:960px;margin:0 auto}
+.section-label{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.18);margin-bottom:12px}
+.news-list{display:flex;flex-direction:column;gap:8px}
+.news-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.055);border-left:3px solid transparent;border-radius:10px;padding:14px 16px;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;transition:all .15s;text-decoration:none;color:inherit}
+.news-card:hover{background:rgba(255,255,255,.055);transform:translateX(3px)}
+.cat-f1-card{border-left-color:#e8002d}.cat-f1-card:hover{box-shadow:-2px 0 16px rgba(232,0,45,.2)}
+.cat-gt-card{border-left-color:#3b82f6}.cat-gt-card:hover{box-shadow:-2px 0 16px rgba(59,130,246,.2)}
+.cat-sim-card{border-left-color:#a855f7}.cat-sim-card:hover{box-shadow:-2px 0 16px rgba(168,85,247,.2)}
+.card-meta{display:flex;align-items:center;gap:6px;margin-bottom:5px;flex-wrap:wrap}
+.cat-tag{font-size:9px;font-weight:800;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:1px}
+.cat-f1{background:rgba(232,0,45,.15);color:#ff6b84;border:1px solid rgba(232,0,45,.2)}
+.cat-gt{background:rgba(59,130,246,.15);color:#7dd3fc;border:1px solid rgba(59,130,246,.2)}
+.cat-sim{background:rgba(168,85,247,.15);color:#d8b4fe;border:1px solid rgba(168,85,247,.2)}
+.cat-alg{background:rgba(255,255,255,.05);color:#888;border:1px solid rgba(255,255,255,.1)}
+.card-source{font-size:10px;color:rgba(255,255,255,.22)}
+.card-title{font-size:14px;font-weight:700;color:rgba(255,255,255,.88);line-height:1.35;margin-bottom:4px}
+.card-summary{font-size:12px;color:rgba(255,255,255,.34);line-height:1.55}
+.card-arrow{color:rgba(255,255,255,.16);font-size:17px;transition:color .15s;flex-shrink:0}
+.news-card:hover .card-arrow{color:#e8002d}
+.no-news{text-align:center;padding:48px;color:rgba(255,255,255,.12);font-size:13px}
+.footer{text-align:center;padding:0 0 32px;font-size:10px;color:rgba(255,255,255,.08);letter-spacing:.5px}
+
+/* ── RESPONSIVE ── */
+@media(max-width:680px){
+  .header-img{height:140px}
+  .title-bar{padding:10px 14px;gap:10px}
+  .site-title{font-size:19px}
+  .update-badge{margin-left:0;width:100%}
+  .race-blok{padding:14px 14px 18px}
+  .race-naam{font-size:15px}
+  .race-flag{font-size:26px}
+  .countdown-label{text-align:left}
+  .countdown-blok{width:100%}
+  .countdown{justify-content:flex-start}
+  .cd-num{font-size:20px}
+  .cd-unit{min-width:44px;padding:5px 8px}
+  .circuit-info{gap:5px}
+  .ci-item{min-width:90px;padding:6px 10px}
+  .tijdlijn{gap:4px}
+  .s-row{min-width:110px;padding:6px 10px}
+  .filter-bar{padding:8px 14px}
+  .news-section{padding:14px 12px 32px}
+  .news-card{padding:11px 13px}
+  .card-title{font-size:13px}
+  .card-summary,.card-arrow{display:none}
+}
+@media(max-width:380px){
+  .site-title{font-size:16px}
+  .cd-num{font-size:17px}
+  .card-summary{display:none}
+}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <div class="header-photos"><img src="header.jpg" alt="Max Verstappen"></div>
-  <div class="header-track"></div>
-  <div class="header-title-bar">
-    <div class="header-eyebrow">Verstappen Racing Universe</div>
-    <h1 class="header-title">Max <em>Verstappen</em> Nieuws</h1>
-    <div class="header-sub">
+  <div class="header-img"><img src="header.jpg" alt="Max Verstappen Racing"></div>
+  <div class="track-line"></div>
+  <div class="title-bar">
+    <span class="eyebrow">Verstappen Racing Universe</span>
+    <h1 class="site-title">Max <em>Verstappen</em> Nieuws</h1>
+    <div class="update-badge">
       <div class="live-dot"></div>
-      <span>Bijgewerkt op vrijdag 19 juni 2026 · Dagelijks om 08:00 &amp; 18:00</span>
+      <span>Bijgewerkt zaterdag 20 juni 2026 · 08:00 &amp; 18:00</span>
     </div>
   </div>
 </div>
 
 <div class="race-blok">
-  <div class="race-top">
-    <div class="nr-label">Volgende Race</div>
-    <div class="nr-divider"></div>
-    <div class="nr-flag">🇪🇸</div>
-    <div class="nr-info">
-      <div class="nr-race">Grand Prix van Spanje</div>
-      <div class="nr-date">Circuit de Barcelona-Catalunya · zondag 21 juni 2026 · 15:00 Amsterdam tijd</div>
+  <div class="race-header">
+    <div class="race-flag">🇪🇸</div>
+    <div class="race-meta">
+      <div class="race-label">Volgende Race</div>
+      <div class="race-naam">Grand Prix van Spanje</div>
+      <div class="race-circuit">Circuit de Barcelona-Catalunya</div>
+      <div class="race-datum">🕐 Race: zondag 21 juni 2026 · 15:00 Amsterdam</div>
     </div>
-    <div class="nr-countdown" id="countdown"></div>
+    <div class="countdown-blok">
+      <div class="countdown-label " id="cd-label">Tot Vrije Training 3</div>
+      <div class="countdown" id="countdown"></div>
+    </div>
   </div>
-  <div class="sessies"><div class="sessie-row sessie-done">
-  <span class="sessie-dot">✓</span>
-  <span class="sessie-naam">Vrije Training 1</span>
-  <span class="sessie-tijd">vr 19/6 · 13:30</span>
-</div>
-<div class="sessie-row sessie-done">
-  <span class="sessie-dot">✓</span>
-  <span class="sessie-naam">Vrije Training 2</span>
-  <span class="sessie-tijd">vr 19/6 · 17:00</span>
-</div>
-<div class="sessie-row sessie-upcoming">
-  <span class="sessie-dot">◉</span>
-  <span class="sessie-naam">Vrije Training 3</span>
-  <span class="sessie-tijd">za 20/6 · 12:30</span>
-</div>
-<div class="sessie-row sessie-upcoming">
-  <span class="sessie-dot">◉</span>
-  <span class="sessie-naam">Kwalificatie</span>
-  <span class="sessie-tijd">za 20/6 · 16:00</span>
-</div>
-<div class="sessie-row sessie-race">
-  <span class="sessie-dot">🏁</span>
-  <span class="sessie-naam">Race</span>
-  <span class="sessie-tijd">zo 21/6 · 15:00</span>
-</div>
+
+  <div class="circuit-info">
+    <div class="ci-item"><div class="ci-val">4.657 km</div><div class="ci-key">Rondelengte</div></div>
+    <div class="ci-item"><div class="ci-val">66</div><div class="ci-key">Ronden</div></div>
+    <div class="ci-item"><div class="ci-val">1:16.330</div><div class="ci-key">Ronderecord</div></div>
+    <div class="ci-item"><div class="ci-val" style="font-size:10px;padding-top:2px">Max Verstappen (2023)</div><div class="ci-key">Door</div></div>
+  </div>
+
+  <div class="tijdlijn-label">Weekendschema — Amsterdam tijd</div>
+  <div class="tijdlijn"><div class="s-row s-done"><span class="s-check">✓</span><span class="s-naam">Vrije Training 1</span><span class="s-tijd">vr 19/6 · 13:30</span></div>
+<div class="s-row s-done"><span class="s-check">✓</span><span class="s-naam">Vrije Training 2</span><span class="s-tijd">vr 19/6 · 17:00</span></div>
+<div class="s-row s-next"><span class="s-dot-next">◉</span><span class="s-naam">Vrije Training 3</span><span class="s-tijd">za 20/6 · 12:30</span></div>
+<div class="s-row s-next"><span class="s-dot-next">◉</span><span class="s-naam">Kwalificatie</span><span class="s-tijd">za 20/6 · 16:00</span></div>
+<div class="s-row s-race"><span class="s-dot-race">🏁</span><span class="s-naam">Race</span><span class="s-tijd">zo 21/6 · 15:00</span></div>
 </div>
 </div>
 
 <div class="filter-bar">
   <button class="filter-btn active" onclick="filter('alles',this)">🏁 Alles</button>
-  <button class="filter-btn" onclick="filter('f1',this)">🔴 Formule 1</button>
+  <button class="filter-btn" onclick="filter('f1',this)">🔴 F1</button>
   <button class="filter-btn" onclick="filter('gt',this)">🔵 GT Racing</button>
   <button class="filter-btn" onclick="filter('sim',this)">🟣 Simracing</button>
   <button class="filter-btn" onclick="filter('alg',this)">⬛ Algemeen</button>
@@ -338,7 +354,7 @@
       <span class="card-source">Motorsport.com</span>
     </div>
     <div class="card-title">"Ik ben geen machine": Isack Hadjar vernietigt de Red Bull-startprocedure</div>
-    <div class="card-summary">De coureurs van Red Bull hebben sinds het begin van het Formule 1-seizoen moeite met hun start. Hoewel er af en toe sterke ontsnappingen …</div>
+    <div class="card-summary">De coureurs van Red Bull kampen al sinds het begin van het Formule 1-seizoen met hun start. Hoewel er af en toe sterke ontsnappingen ware…</div>
   </div>
   <div class="card-arrow">↗</div>
 </a>
@@ -389,27 +405,38 @@
 </div>
 </div>
 
-<div class="footer">MAX VERSTAPPEN NIEUWS · AUTOMATISCH BIJGEWERKT · DAGELIJKS 08:00 &amp; 18:00</div>
+<div class="footer">MAX VERSTAPPEN NIEUWS · DAGELIJKS 08:00 &amp; 18:00 AMSTERDAM TIJD</div>
 
 <script>
 (function(){
-  const d=new Date('2026-06-21T15:00:00+02:00');
+  const target = new Date('2026-06-20T12:30:00+02:00');
+  const isLive = false;
+  const lbl = document.getElementById('cd-label');
+
   function tick(){
-    const diff=d-new Date();
-    if(diff<=0){document.getElementById('countdown').innerHTML='<span style="color:#22c55e;font-weight:800">🏁 RACE DAY!</span>';return}
-    const dd=Math.floor(diff/86400000),h=Math.floor(diff%86400000/3600000),m=Math.floor(diff%3600000/60000),s=Math.floor(diff%60000/1000);
-    document.getElementById('countdown').innerHTML=
-      `<div class="nr-unit"><div class="nr-num">${dd}</div><div class="nr-lbl">Dagen</div></div>`+
-      `<div class="nr-unit"><div class="nr-num">${String(h).padStart(2,'0')}</div><div class="nr-lbl">Uur</div></div>`+
-      `<div class="nr-unit"><div class="nr-num">${String(m).padStart(2,'0')}</div><div class="nr-lbl">Min</div></div>`+
-      `<div class="nr-unit"><div class="nr-num">${String(s).padStart(2,'0')}</div><div class="nr-lbl">Sec</div></div>`;
+    const diff = target - new Date();
+    const el = document.getElementById('countdown');
+    if(isLive || diff <= 0){
+      el.innerHTML = '<div class="cd-unit" style="border-color:rgba(34,197,94,.4)"><div class="cd-num" style="color:#22c55e;font-size:16px">LIVE</div><div class="cd-lbl">Nu bezig</div></div>';
+      if(lbl) lbl.textContent = 'Nu live';
+      return;
+    }
+    const dd=Math.floor(diff/86400000),
+          h=Math.floor(diff%86400000/3600000),
+          m=Math.floor(diff%3600000/60000),
+          s=Math.floor(diff%60000/1000);
+    const u=(n,l)=>`<div class="cd-unit"><div class="cd-num">${String(n).padStart(2,'0')}</div><div class="cd-lbl">${l}</div></div>`;
+    el.innerHTML = (dd>0?u(dd,'Dagen'):'') + u(h,'Uur') + u(m,'Min') + u(s,'Sec');
   }
-  tick();setInterval(tick,1000);
+  tick(); setInterval(tick,1000);
 })();
+
 function filter(cat,btn){
   document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
-  document.querySelectorAll('.news-card').forEach(c=>{c.style.display=(cat==='alles'||c.dataset.cat===cat)?'':'none'});
+  document.querySelectorAll('.news-card').forEach(c=>{
+    c.style.display = (cat==='alles'||c.dataset.cat===cat) ? '' : 'none';
+  });
 }
 </script>
 </body>
